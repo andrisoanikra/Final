@@ -1,0 +1,266 @@
+/* ===== RESET ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background-color: #f4f6f8;
+    color: #333;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: #f4f6f8;
+}
+
+.nav-container {
+    width: 90%;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links a {
+    color: black;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.nav-links a:hover {
+    color: #2563eb;
+}
+
+/* ===== HERO ===== */
+.hero {
+    height: 60vh;
+    background: #f4f6f8,
+    url("https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d") center/cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-content {
+    text-align: center;
+    
+}
+
+.hero-content h1 {
+    font-size: 100px;
+    margin-bottom: 10px;
+}
+
+.hero-content p {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.btn-primary {
+    background-color: #2563eb;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.btn-primary:hover {
+    background-color: #1d4ed8;
+}
+
+/* ===== CONTAINER ===== */
+.container {
+    width: 90%;
+    margin: 40px auto;
+}
+
+.container h2 {
+    margin-bottom: 20px;
+}
+
+/* ===== TABLE ===== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+thead {
+    background-color: #1e293b;
+    color: white;
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f1f5f9;
+}
+
+tbody tr:hover {
+    background-color: #e0f2fe;
+}
+
+/* ===== BUTTONS ===== */
+.action-btn {
+    background-color: #2563eb;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.action-btn:hover {
+    background-color: #1d4ed8;
+}
+
+.btn-ajout{
+    padding: 6px 12px;
+    text-decoration: none;
+    font-size: 40px;
+    color: black;
+}
+
+/* ===== STATUS ===== */
+.status {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 13px;
+    color: #2563eb;
+}
+
+.status.livre {
+    background-color: #16a34a;
+}
+
+.status.en_cours {
+    background-color: #f59e0b;
+}
+
+.status.annule {
+    background-color: #dc2626;
+}
+
+/* ========================= */
+/* ===== RESPONSIVE ======= */
+/* ========================= */
+
+#menu-toggle {
+    display: none;
+}
+
+.menu-icon {
+    display: none;
+    font-size: 26px;
+    cursor: pointer;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
+
+    /* NAVBAR */
+    .menu-icon {
+        display: block;
+    }
+
+    .nav-links {
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        background-color: #f4f6f8;
+        flex-direction: column;
+        display: none;
+    }
+
+    .nav-links li {
+        text-align: center;
+        padding: 12px 0;
+    }
+
+    #menu-toggle:checked + .menu-icon + .nav-links {
+        display: flex;
+    }
+
+    /* HERO */
+    .hero {
+        
+        padding: 20px;
+    }
+
+    .btn-primary {
+        width: 70%;
+        display: inline-block;
+    }
+
+    /* CONTAINER */
+    .container {
+        width: 95%;
+        margin-top: 25px;
+    }
+
+    /* TABLE → CARDS */
+    table, thead, tbody, th, tr {
+        display: block;
+    }
+
+    thead {
+        display: none;
+    }
+
+    tbody tr {
+        background: white;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        padding: 10px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    tbody td {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    tbody td:last-child {
+        border-bottom: none;
+    }
+
+    tbody td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #475569;
+    }
+
+    /* BUTTON */
+    .action-btn {
+        width: 15%;
+        text-align: center;
+        padding: 8px;
+    }
+}

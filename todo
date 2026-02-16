@@ -1,0 +1,145 @@
+1- [x]Creation du todo (Stéphanie)
+
+    [x]Creation des taches
+
+    [x]Suivi (cochage, assignement, modification ou ajout) 
+
+2- [x]Creation des scripts SQL (Stéphanie)
+
+    [x]Creation des tables
+
+        [x]lv_chauffeur
+
+        [x]lv_vehicule
+
+        [x]lv_vehicule
+
+        [x]lv_livraison
+
+        [x]lv_zone
+
+    [x]Insertion des donnees
+
+        [x]Données de test
+
+        [x]10 véhicules
+        
+        [x]12 chauffeurs
+
+            [x]5 chauffeurs à 15000 ar / livraison
+
+            [x]3 chauffeurs à 18000 ar / livraison
+
+            [x]4 chauffeurs à 20000 ar / livraison
+        
+
+    [x]Creation des requetes
+
+        [x]Récupérer tous les chauffeurs
+
+        [x]Récupérer un chauffeur par ID
+
+        [x]Récupérer le salaire d’un chauffeur
+
+        [x]Nombre de livraisons par chauffeur
+
+        [x]Récupérer tous les véhicules
+
+        [x]Récupérer un véhicule par ID
+
+        [x]Récupérer le coût journalier d’un véhicule
+
+        [x]Récupérer tous les colis
+
+        [x]Récupérer un colis par ID
+
+        [x]Montant gagné par kg (poids × prix/kg)
+
+        [x]Créer une livraison
+
+        [x]Afficher toutes les livraisons avec détails
+
+        [x]Récupérer les livraisons par statut
+
+        [x]Modifier le statut d’une livraison
+
+        [x]Coût de revient par livraison
+
+        [x]Chiffre d’affaire total
+
+        [x]Bénéfice par livraison
+        
+        [x]Bénéfice par jour
+
+        [x]Bénéfice par mois
+
+        [x]Bénéfice par année
+
+        [x]Supprimer toutes les livraisons
+
+
+3- [x]Creation des modeles (Anjasoa)
+
+    [x]ChauffeurModel
+    
+    [x]ColisModel
+        
+    [x]LivraisonsModel
+
+    [x]StatistiqueModel
+
+    [x]VehiculeModel
+
+4- [x]Creation des controlleurs (Anjasoa)
+
+    [x]LivraisonsController
+
+5- [x]Creation des vues (Anjasoa)
+
+    [x]index
+
+    [x]benefices_livraisons
+
+    [x]chauffeur_item
+
+    [x]chauffeur_nombre_livraisons
+
+    [x]chauffeur
+
+    [x]chiffre_affaire
+
+    [x]colis_item
+
+    [x]colis
+
+    [x]confirm_delete
+
+    [x]create
+
+    [x]livraison
+
+    [x]livraisons
+
+    [x]stat_chiffre_affaire
+
+    [x]vehicule_item
+
+    [x]vehicules
+
+6- [x]Mise en page (Stéphanie)
+
+    [x]Hero section
+
+    [X]Barre de navigation
+
+    [x]Formulaires
+
+    [X]Tables
+
+7- [x]Déploiement (Stéphanie)
+
+    [x]Importation de la base
+
+    [x]Modification des liens
+
+    [x]Importation des fichiers

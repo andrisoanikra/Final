@@ -1,0 +1,116 @@
+/* =============================== */
+/* ===== FORMULAIRE LIVRAISON ==== */
+/* =============================== */
+
+.livraison-form-wrapper {
+    position: relative;
+    background: #ffffff;
+    padding: 32px 26px;
+    border-radius: 12px;
+    max-width: 520px;
+    margin: 40px auto;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* ===== TITRE ===== */
+.livraison-form-wrapper h2 {
+    text-align: center;
+    margin-bottom: 22px;
+    color: #1e293b;
+}
+
+/* ===== LIEN RETOUR ===== */
+.livraison-form-wrapper .back-link {
+    display: inline-block;
+    margin-bottom: 10px;
+    text-decoration: none;
+    font-weight: 500;
+    color: #2563eb;
+}
+
+.livraison-form-wrapper .back-link:hover {
+    text-decoration: underline;
+}
+
+/* =============================== */
+/* ===== MESSAGES ERREUR ========= */
+/* =============================== */
+
+.livraison-form-wrapper .errors {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 18px;
+}
+
+.livraison-form-wrapper .errors div {
+    font-size: 14px;
+}
+
+/* =============================== */
+/* ===== FORM ELEMENTS ========== */
+/* =============================== */
+
+.livraison-form-wrapper label {
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.livraison-form-wrapper input[type="text"],
+.livraison-form-wrapper input[type="number"],
+.livraison-form-wrapper input[type="date"],
+.livraison-form-wrapper select {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 15px;
+    background-color: #ffffff;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.livraison-form-wrapper select {
+    cursor: pointer;
+}
+
+.livraison-form-wrapper input:focus,
+.livraison-form-wrapper select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+/* =============================== */
+/* ===== BOUTON SUBMIT ========== */
+/* =============================== */
+
+.livraison-form-wrapper button[type="submit"] {
+    width: 100%;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.livraison-form-wrapper button[type="submit"]:hover {
+    background-color: #1d4ed8;
+}
+
+/* =============================== */
+/* ===== RESPONSIVE MOBILE ====== */
+/* =============================== */
+
+@media (max-width: 768px) {
+    .livraison-form-wrapper {
+        padding: 26px 20px;
+        margin: 20px;
+    }
+}

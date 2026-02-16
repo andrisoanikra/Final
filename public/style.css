@@ -1,0 +1,179 @@
+/* public/style.css
+   Simple, clean and professional stylesheet for the livraison app
+   - Neutral, accessible color palette
+   - Clear typography and spacing
+   - Styled tables, forms, buttons and utility helpers
+*/
+
+:root{
+  --bg:#f6f7fb;
+  --card:#ffffff;
+  --muted:#667085;
+  --text:#0f1724;
+  --primary:#0b6efd; /* vivid blue */
+  --primary-600:#0956c6;
+  --accent:#06b6d4; /* teal */
+  --danger:#ef4444;
+  --success:#16a34a;
+  --shadow: 0 6px 18px rgba(15,23,36,0.08);
+  --radius:10px;
+  --pad:20px;
+  --max-width:1100px;
+  --hr:#e6e9ef;
+}
+
+/* Global */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background:var(--bg);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  line-height:1.45;
+  font-size:15px;
+}
+
+.container{
+  max-width:var(--max-width);
+  margin:36px auto;
+  background:var(--card);
+  padding:var(--pad);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+
+/* public/style.css
+   Enhanced blue/gray theme for the livraison app
+   - Sophisticated palette with gradients and depth
+   - Responsive layout, nav/header, refined tables and forms
+   - Utility helpers and subtle animations
+*/
+
+:root{
+  --bg-100: #f4f6fb;
+  --bg-200: #eef2fb;
+  --card: #ffffff;
+  --muted: #6b7280;
+  --text: #0f1724;
+  --primary-50: #e6f0ff;
+  --primary-300: #4f8cfb;
+  --primary-500: #2563eb;
+  --primary-700: #194fc4;
+  --accent: #60a5fa;
+  --glass: rgba(255,255,255,0.6);
+  --danger: #ef4444;
+  --success: #10b981;
+  --shadow-1: 0 6px 18px rgba(15,23,36,0.06);
+  --shadow-2: 0 10px 30px rgba(15,23,36,0.08);
+  --radius: 10px;
+  --pad: 20px;
+  --max-width: 1200px;
+  --hr: #e6ecff;
+}
+
+/* Base */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  background: linear-gradient(180deg,var(--bg-100), #f8fbff 60%);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  line-height:1.5;
+  font-size:15px;
+}
+
+.app-header{
+  background: linear-gradient(90deg, rgba(37,99,235,0.98), rgba(79,140,251,0.95));
+  color: white;
+  padding:14px 24px;
+  display:flex;align-items:center;justify-content:space-between;
+  box-shadow: var(--shadow-1);
+}
+.brand{display:flex;align-items:center;gap:12px}
+.brand .logo{width:44px;height:44px;border-radius:8px;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-weight:700}
+.brand h1{margin:0;font-size:18px}
+
+.top-nav{display:flex;gap:10px;align-items:center}
+.top-nav a{color:rgba(255,255,255,0.95);text-decoration:none;padding:8px 10px;border-radius:8px;font-weight:600}
+.top-nav a:hover{background:rgba(255,255,255,0.06)}
+
+.container{
+  max-width:var(--max-width);
+  margin:28px auto;
+  background:var(--card);
+  padding:var(--pad);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-2);
+}
+
+.page-title{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.page-title h2{margin:0;font-size:20px}
+
+/* Utilities */
+.muted{color:var(--muted)}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.col{flex:1}
+.small{font-size:13px}
+.center{display:flex;align-items:center;justify-content:center}
+.mb-8{margin-bottom:8px}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:8px;border:none;background:var(--primary-500);color:white;font-weight:600;text-decoration:none;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,0.12);
+}
+.btn.secondary{background:transparent;color:var(--primary-500);border:1px solid var(--hr);box-shadow:none}
+.btn.ghost{background:transparent;color:var(--muted);border:1px dashed #e8eefc}
+.btn:hover{transform:translateY(-1px)}
+
+/* Cards */
+.card{padding:16px;border-radius:10px;background:linear-gradient(180deg,var(--card),var(--glass));border:1px solid #f0f5ff}
+.card h3{margin:0 0 8px 0}
+
+/* Table */
+.table{width:100%;border-collapse:collapse;font-size:14px;background:transparent}
+.table thead th{background:linear-gradient(180deg,#f8fbff,#eef6ff);padding:12px 14px;text-align:left;color:var(--muted);font-weight:700;border-bottom:1px solid #e9f1ff}
+.table tbody td{padding:12px 14px;border-bottom:1px solid #f4f7ff}
+.table tbody tr:hover{background:linear-gradient(90deg, rgba(79,140,251,0.03), rgba(37,99,235,0.02))}
+.table .numeric{text-align:right}
+
+/* Forms */
+label{display:block;font-weight:600;margin-bottom:6px;color:var(--muted)}
+input,select,textarea{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #e6eeff;background:#fff;box-shadow:none}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary-500);box-shadow:0 6px 18px rgba(37,99,235,0.08)}
+
+.form-row{display:flex;gap:12px}
+.form-actions{display:flex;gap:8px;align-items:center}
+
+/* Stat boxes */
+.stats{display:flex;gap:12px;flex-wrap:wrap}
+.stat{flex:1;padding:12px;border-radius:8px;background:linear-gradient(180deg,#ffffff,#fbfdff);border:1px solid #eef6ff}
+.stat .k{color:var(--muted);font-size:13px}
+.stat .v{font-weight:800;font-size:18px}
+
+/* Alerts */
+.alert{padding:10px 12px;border-radius:8px;margin-bottom:12px}
+.alert.error{background:rgba(239,68,68,0.08);color:var(--danger);border:1px solid rgba(239,68,68,0.12)}
+.alert.success{background:rgba(16,185,129,0.08);color:var(--success);border:1px solid rgba(16,185,129,0.12)}
+
+/* Footer */
+.footer{font-size:13px;color:var(--muted);margin-top:18px;text-align:center}
+
+/* Responsive */
+@media (max-width:900px){
+  .page-title{flex-direction:column;align-items:flex-start}
+  .form-row{flex-direction:column}
+  .stats{flex-direction:column}
+}
+
+/* small helpers */
+a{color:var(--primary-700);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* End */
+
