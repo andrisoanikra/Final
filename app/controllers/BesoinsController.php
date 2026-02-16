@@ -39,33 +39,44 @@ class BesoinsController {
     }
 
     /**
-     * Enregistre un nouveau besoin
+     * Enregistre un nouveau besoin avec ses articles
      */
     public function storeBesoin() {
         $model = new BesoinsModel(Flight::db());
         
-        $data = [
-            'id_ville' => $_POST['id_ville'] ?? null,
-            'id_article' => $_POST['id_article'] ?? null,
-            'quantite' => $_POST['quantite'] ?? null,
-            'prix_unitaire' => $_POST['prix_unitaire'] ?? null,
-            'description' => $_POST['description'] ?? null,
-            'urgence' => $_POST['urgence'] ?? 'normale' // normale, urgente, critique
-        ];
+        $id_ville = $_POST['id_ville'] ?? null;
+        $description = $_POST['description'] ?? null;
+        $urgence = $_POST['urgence'] ?? 'normale';
+        $id_articles = $_POST['id_article'] ?? [];
+        $quantites = $_POST['quantite'] ?? [];
+        $prix_unitaires = $_POST['prix_unitaire'] ?? [];
 
         // Validation
         $errors = [];
-        if (empty($data['id_ville'])) {
+        if (empty($id_ville)) {
             $errors[] = 'Veuillez sélectionner une ville';
         }
-        if (empty($data['id_article'])) {
-            $errors[] = 'Veuillez sélectionner un article';
-        }
-        if (empty($data['quantite']) || $data['quantite'] <= 0) {
-            $errors[] = 'La quantité doit être supérieure à 0';
-        }
-        if (empty($data['prix_unitaire']) || $data['prix_unitaire'] <= 0) {
-            $errors[] = 'Le prix unitaire doit être supérieur à 0';
+        
+        // Valider les articles
+        if (empty($id_articles) || !is_array($id_articles)) {
+            $errors[] = 'Veuillez ajouter au moins un article';
+        } else {
+            foreach ($id_articles as $index => $id_article) {
+                if (empty($id_article)) {
+                    $errors[] = 'Veuillez sélectionner un article pour chaque ligne';
+                    break;
+                }
+                
+                $quantite = $quantites[$index] ?? null;
+                $prix = $prix_unitaires[$index] ?? null;
+                
+                if (empty($quantite) || $quantite <= 0) {
+                    $errors[] = 'La quantité de l\'article ' . ($index + 1) . ' doit être supérieure à 0';
+                }
+                if (empty($prix) || $prix <= 0) {
+                    $errors[] = 'Le prix unitaire de l\'article ' . ($index + 1) . ' doit être supérieur à 0';
+                }
+            }
         }
 
         if (!empty($errors)) {
@@ -77,29 +88,35 @@ class BesoinsController {
                 'villes' => $villesModel->getAllVilles(),
                 'articles' => $articlesModel->getAllArticles(),
                 'errors' => $errors,
-                'old' => $data
+                'old' => [
+                    'id_ville' => $id_ville,
+                    'description' => $description,
+                    'urgence' => $urgence
+                ]
             ]);
             return;
         }
 
-        // Appeler la méthode addBesoin avec les paramètres individuels
-        $statut = $_POST['statut'] ?? 'en_cours';
-        $description = $_POST['description'] ?? null;
-        $urgence = $_POST['urgence'] ?? 'normale';
-        
-        $id = $model->addBesoin(
-            $data['id_ville'],
-            $data['id_article'],
-            $data['quantite'],
-            $data['prix_unitaire'],
-            $statut,
+        // Créer le besoin
+        $besoinId = $model->addBesoin(
+            $id_ville,
             $description,
             $urgence
         );
         
-        if ($id) {
+        if ($besoinId) {
+            // Ajouter les articles au besoin
+            foreach ($id_articles as $index => $id_article) {
+                $model->addArticleToBesoin(
+                    $besoinId,
+                    $id_article,
+                    $quantites[$index],
+                    $prix_unitaires[$index]
+                );
+            }
+            
             // Rediriger vers la page de la ville avec un message de succès
-            Flight::redirect('/villes/' . $data['id_ville'] . '?success=besoin_ajoute');
+            Flight::redirect('/villes/' . $id_ville . '?success=besoin_ajoute');
         } else {
             // Erreur lors de l'insertion
             $errors[] = 'Erreur lors de l\'ajout du besoin';
@@ -110,7 +127,11 @@ class BesoinsController {
                 'villes' => $villesModel->getAllVilles(),
                 'articles' => $articlesModel->getAllArticles(),
                 'errors' => $errors,
-                'old' => $data
+                'old' => [
+                    'id_ville' => $id_ville,
+                    'description' => $description,
+                    'urgence' => $urgence
+                ]
             ]);
         }
     }

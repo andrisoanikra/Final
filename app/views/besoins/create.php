@@ -37,30 +37,41 @@
                 </div>
 
                 <div class="form-group mb-3">
-                    <label for="id_article" class="form-label">Article <span class="text-danger">*</span></label>
-                    <select class="form-control" id="id_article" name="id_article" required>
-                        <option value="">-- Sélectionner un article --</option>
-                        <?php foreach ($articles as $article): ?>
-                            <option value="<?php echo $article['id_article']; ?>" 
-                                <?php echo (isset($selectedArticle) && $selectedArticle == $article['id_article']) ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($article['nom_article']); ?> (<?php echo htmlspecialchars($article['libelle_type']); ?>)
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <div class="form-group mb-3">
-                    <label for="quantite" class="form-label">Quantité <span class="text-danger">*</span></label>
-                    <input type="number" class="form-control" id="quantite" name="quantite" 
-                        placeholder="Quantité" step="0.01" required
-                        value="<?php echo isset($old['quantite']) ? htmlspecialchars($old['quantite']) : ''; ?>">
-                </div>
-
-                <div class="form-group mb-3">
-                    <label for="prix_unitaire" class="form-label">Prix unitaire (Ar) <span class="text-danger">*</span></label>
-                    <input type="number" class="form-control" id="prix_unitaire" name="prix_unitaire" 
-                        placeholder="Prix unitaire" step="0.01" required
-                        value="<?php echo isset($old['prix_unitaire']) ? htmlspecialchars($old['prix_unitaire']) : ''; ?>">
+                    <label class="form-label">Articles <span class="text-danger">*</span></label>
+                    <div id="articles-container">
+                        <div class="article-item card p-3 mb-3">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <label class="form-label">Article</label>
+                                    <select class="form-control article-select" name="id_article[]" required>
+                                        <option value="">-- Sélectionner un article --</option>
+                                        <?php foreach ($articles as $article): ?>
+                                            <option value="<?php echo $article['id_article']; ?>" 
+                                                <?php echo (isset($selectedArticle) && $selectedArticle == $article['id_article']) ? 'selected' : ''; ?>>
+                                                <?php echo htmlspecialchars($article['nom_article']); ?> (<?php echo htmlspecialchars($article['libelle_type']); ?>)
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Quantité</label>
+                                    <input type="number" class="form-control" name="quantite[]" 
+                                        placeholder="Quantité" step="0.01" required
+                                        value="<?php echo isset($old['quantite']) ? htmlspecialchars($old['quantite']) : ''; ?>">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Prix unitaire (Ar)</label>
+                                    <input type="number" class="form-control" name="prix_unitaire[]" 
+                                        placeholder="Prix unitaire" step="0.01" required
+                                        value="<?php echo isset($old['prix_unitaire']) ? htmlspecialchars($old['prix_unitaire']) : ''; ?>">
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="button" class="btn btn-danger btn-sm w-100 remove-article">Supprimer</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" id="add-article-btn" class="btn btn-secondary btn-sm">+ Ajouter un article</button>
                 </div>
 
                 <div class="form-group mb-3">
@@ -97,10 +108,84 @@
                     if (form.checkValidity() === false) {
                         event.preventDefault();
                         event.stopPropagation();
+                        form.classList.add('was-validated');
                     }
-                    form.classList.add('was-validated');
                 }, false);
             });
         }, false);
     })();
+
+    // Gestion des articles dynamiques
+    const articlesContainer = document.getElementById('articles-container');
+    const addArticleBtn = document.getElementById('add-article-btn');
+    const articlesData = <?php echo json_encode($articles); ?>;
+
+    function createArticleOption() {
+        let html = '<option value="">-- Sélectionner un article --</option>';
+        articlesData.forEach(article => {
+            html += `<option value="${article.id_article}">${htmlEscape(article.nom_article)} (${htmlEscape(article.libelle_type)})</option>`;
+        });
+        return html;
+    }
+
+    function htmlEscape(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function createArticleItem() {
+        const div = document.createElement('div');
+        div.className = 'article-item card p-3 mb-3';
+        div.innerHTML = `
+            <div class="row">
+                <div class="col-md-5">
+                    <label class="form-label">Article</label>
+                    <select class="form-control article-select" name="id_article[]" required>
+                        ${createArticleOption()}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Quantité</label>
+                    <input type="number" class="form-control" name="quantite[]" 
+                        placeholder="Quantité" step="0.01" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Prix unitaire (Ar)</label>
+                    <input type="number" class="form-control" name="prix_unitaire[]" 
+                        placeholder="Prix unitaire" step="0.01" required>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="button" class="btn btn-danger btn-sm w-100 remove-article">Supprimer</button>
+                </div>
+            </div>
+        `;
+        return div;
+    }
+
+    addArticleBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        articlesContainer.appendChild(createArticleItem());
+        attachRemoveListeners();
+    });
+
+    function attachRemoveListeners() {
+        const removeButtons = document.querySelectorAll('.remove-article');
+        removeButtons.forEach(btn => {
+            btn.removeEventListener('click', removeArticle);
+            btn.addEventListener('click', removeArticle);
+        });
+    }
+
+    function removeArticle(e) {
+        e.preventDefault();
+        if (document.querySelectorAll('.article-item').length > 1) {
+            e.target.closest('.article-item').remove();
+        } else {
+            alert('Vous devez garder au moins un article.');
+        }
+    }
+
+    // Attacher les listeners au chargement
+    attachRemoveListeners();
 </script>
