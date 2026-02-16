@@ -224,4 +224,18 @@ class DonsController
             Flight::redirect('/dons?error=' . urlencode($result['message']));
         }
     }
+
+
+    /**
+     * Affiche la liste des dons disponibles via v_dons_disponibles
+     */
+    public function listeDonsDisponibles()
+    {
+        // Maka données avy amin'ny vue v_dons_disponibles
+        $sql = "SELECT * FROM v_dons_disponibles ORDER BY date_don DESC";
+        $dons = $this->db->runQuery($sql)->fetchAll();
+
+        // Charger la vue
+        require_once __DIR__ . '/../views/dons/liste_disponibles.php';
+    }
 }

@@ -112,4 +112,5 @@ $router->group('/', function (Router $router) use ($app) {
 	$router->post('articles/update/@id', [ArticlesController::class, 'update']);
 	$router->get('articles/supprimer/@id', [ArticlesController::class, 'supprimer']);
    $router->get('besoins', [BesoinsController::class, 'listeBesoins']);
+   $router->get('dons/disponibles', [DonsController::class, 'listeDonsDisponibles']);
 }, [new SecurityHeadersMiddleware($app)]);

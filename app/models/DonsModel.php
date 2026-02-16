@@ -331,4 +331,13 @@ class DonsModel
             'quantite_restante' => $quantite_restante
         ];
     }
+
+    /**
+     * Récupère les dons par type
+     */
+    public function getDonsByType($typeId)
+    {
+        $sql = "SELECT * FROM v_dons_disponibles WHERE id_type_don = ? ORDER BY date_don DESC";
+        return $this->db->runQuery($sql, [$typeId])->fetchAll();
+    }
 }
