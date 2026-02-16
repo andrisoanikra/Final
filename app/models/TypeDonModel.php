@@ -1,30 +1,42 @@
 <?php
 namespace app\models;
 
-use flight\Engine;
+class TypeDonModel
+{
+    private $db;
 
-class TypeDonModel {
-
-    protected Engine $app;
-
-    public function __construct(Engine $app) {
-        $this->app = $app;
+    public function __construct($db)
+    {
+        $this->db = $db;
     }
 
-    public function getAllTypes() {
+    public function getAllTypes()
+    {
+        $tmt = $this->db->runQuery("SELECT * FROM type_don ORDER BY libelle_type;");
+        return $tmt->fetchAll();
+    }
 
-        $db = $this->app->get('db');
+    public function getTypeById($id)
+    {
+        $tmt = $this->db->runQuery("SELECT * FROM type_don WHERE id_type_don = ?;", [$id]);
+        return $tmt->fetch();
+    }
 
-        $result = $db->query("SELECT * FROM type_don");
+    public function addType($libelle_type)
+    {
+        $tmt = $this->db->runQuery("INSERT INTO type_don (libelle_type) VALUES (?);", [$libelle_type]);
+        return $this->db->lastInsertId();
+    }
 
-        $types = [];
+    public function updateType($id, $libelle_type)
+    {
+        $tmt = $this->db->runQuery("UPDATE type_don SET libelle_type = ? WHERE id_type_don = ?;", [$libelle_type, $id]);
+        return $tmt->rowCount();
+    }
 
-        if ($result) {
-            while ($row = $result->fetch_assoc()) {
-                $types[] = $row;
-            }
-        }
-
-        return $types;
+    public function deleteType($id)
+    {
+        $tmt = $this->db->runQuery("DELETE FROM type_don WHERE id_type_don = ?;", [$id]);
+        return $tmt->rowCount();
     }
 }
