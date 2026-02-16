@@ -118,3 +118,9 @@ $app->register('db', $pdoClass, [ $dsn, $config['database']['user'] ?? null, $co
 $app->map('runQuery', function($sql, $params = []) use ($app) {
     return $app->db()->runQuery($sql, $params);
 });
+
+$app->map('lastInsertId', function() use ($app) {
+    return $app->db()->lastInsertId();
+});
+
+
