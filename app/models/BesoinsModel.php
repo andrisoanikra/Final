@@ -97,7 +97,7 @@ class BesoinsModel
         VALUES (?, ?, ?);", [$id_ville, $description, $urgence]);
         
         // Retourner l'ID inséré
-        return $this->db->lastInsertRowID();
+        return $this->db->lastInsertId();
     }
 
     /**
