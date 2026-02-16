@@ -4,6 +4,8 @@
  */
 ?>
 
+<?php include __DIR__ . '/../assets/inc/navbar.php'; ?>
+
 <link rel="stylesheet" href="/assets/css/besoins-form.css">
 
 <div class="besoin-form-container">

@@ -5,6 +5,8 @@ use app\controllers\VillesController;
 use app\controllers\LivraisonsController;
 use app\controllers\TypeDonController;
 use app\controllers\ArticleController;
+use app\controllers\DonsController;
+use app\controllers\TableauBordController;
 use app\middlewares\SecurityHeadersMiddleware;
 use flight\Engine;
 use flight\net\Router;
@@ -27,12 +29,16 @@ $router->group('/', function (Router $router) use ($app) {
     ]);
 });
 
-    // Accueil
-   	$router->get('', [BesoinsController::class, 'getBesoins']);
+    // Accueil / Tableau de bord
+   	$router->get('', [TableauBordController::class, 'index']);
+   	$router->get('tableau-bord', [TableauBordController::class, 'index']);
 
 	/* =======================
 	   BESOINS (routes fixes)
 	   ======================= */
+
+	// Liste des besoins
+	$router->get('besoins', [BesoinsController::class, 'getBesoins']);
 
 	// Création besoin
 	$router->get('besoin/create', [BesoinsController::class, 'newBesoinForm']);
@@ -74,5 +80,24 @@ $router->group('/', function (Router $router) use ($app) {
 	$router->post('ville/@id/delete', [VillesController::class, 'deleteVille']);
 	$router->get('ville/@id/delete', [VillesController::class, 'confirmDeleteVille']);
 	$router->get('ville/@id', [VillesController::class, 'getVilleById']);
+
+	/* =======================
+	   DONS (donations)
+	   ======================= */
+
+	// Création don
+	$router->get('don/create', [DonsController::class, 'newDonForm']);
+	$router->post('don/create', [DonsController::class, 'storeDon']);
+
+	// Liste et consultation
+	$router->get('dons', [DonsController::class, 'getDons']);
+	$router->get('don/@id', [DonsController::class, 'getDonById']);
+
+	// Validation / Dispatch
+	$router->get('don/@id/valider', [DonsController::class, 'validerDon']);
+
+	// Suppression
+	$router->delete('don/@id', [DonsController::class, 'deleteDon']);
+	$router->post('don/@id/delete', [DonsController::class, 'deleteDon']);
 
 }, [new SecurityHeadersMiddleware($app)]);

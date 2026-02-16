@@ -2,48 +2,45 @@
 
 namespace app\controllers;
 
-use flight\Engine;
+use Flight;
 use app\models\BesoinsModel;
 use app\models\VillesModel;
 use app\models\ArticlesModel;
-use Flight;
 
-class BesoinsController {
-    
-    protected Engine $app;
+class BesoinsController
+{
+    protected $db;
+    protected $besoinsModel;
+    protected $villesModel;
+    protected $articlesModel;
 
-    public function __construct($app) {
-        $this->app = $app;
+    public function __construct()
+    {
+        $this->db = Flight::db();
+        $this->besoinsModel = new BesoinsModel($this->db);
+        $this->villesModel = new VillesModel($this->db);
+        $this->articlesModel = new ArticlesModel($this->db);
     }
 
     /**
      * Affiche le formulaire d'ajout de besoin
      */
-    public function newBesoinForm() {
-        $villesModel = new VillesModel(Flight::db());
-        $articlesModel = new ArticlesModel(Flight::db());
-        
-        $villes = $villesModel->getAllVilles();
-        $articles = $articlesModel->getAllArticles();
-        
-        // Récupérer les paramètres GET pour pré-remplir si nécessaire
-        $selectedVille = $_GET['ville_id'] ?? null;
-        $selectedArticle = $_GET['article_id'] ?? null;
+    public function newBesoinForm()
+    {
+        $villes = $this->villesModel->getAllVilles();
+        $articles = $this->articlesModel->getAllArticles();
         
         Flight::render('besoins/create', [
             'villes' => $villes,
-            'articles' => $articles,
-            'selectedVille' => $selectedVille,
-            'selectedArticle' => $selectedArticle
+            'articles' => $articles
         ]);
     }
 
     /**
      * Enregistre un nouveau besoin avec ses articles
      */
-    public function storeBesoin() {
-        $model = new BesoinsModel(Flight::db());
-        
+    public function storeBesoin()
+    {
         $id_ville = $_POST['id_ville'] ?? null;
         $description = $_POST['description'] ?? null;
         $urgence = $_POST['urgence'] ?? 'normale';
@@ -80,13 +77,9 @@ class BesoinsController {
         }
 
         if (!empty($errors)) {
-            // En cas d'erreur, réafficher le formulaire avec les erreurs
-            $villesModel = new VillesModel(Flight::db());
-            $articlesModel = new ArticlesModel(Flight::db());
-            
             Flight::render('besoins/create', [
-                'villes' => $villesModel->getAllVilles(),
-                'articles' => $articlesModel->getAllArticles(),
+                'villes' => $this->villesModel->getAllVilles(),
+                'articles' => $this->articlesModel->getAllArticles(),
                 'errors' => $errors,
                 'old' => [
                     'id_ville' => $id_ville,
@@ -98,7 +91,7 @@ class BesoinsController {
         }
 
         // Créer le besoin
-        $besoinId = $model->addBesoin(
+        $besoinId = $this->besoinsModel->addBesoin(
             $id_ville,
             $description,
             $urgence
@@ -107,7 +100,7 @@ class BesoinsController {
         if ($besoinId) {
             // Ajouter les articles au besoin
             foreach ($id_articles as $index => $id_article) {
-                $model->addArticleToBesoin(
+                $this->besoinsModel->addArticleToBesoin(
                     $besoinId,
                     $id_article,
                     $quantites[$index],
@@ -115,17 +108,13 @@ class BesoinsController {
                 );
             }
             
-            // Rediriger vers la page de la ville avec un message de succès
-            Flight::redirect('/villes/' . $id_ville . '?success=besoin_ajoute');
+            Flight::redirect('/besoins?success=besoin_ajoute');
         } else {
-            // Erreur lors de l'insertion
             $errors[] = 'Erreur lors de l\'ajout du besoin';
-            $villesModel = new VillesModel(Flight::db());
-            $articlesModel = new ArticlesModel(Flight::db());
             
             Flight::render('besoins/create', [
-                'villes' => $villesModel->getAllVilles(),
-                'articles' => $articlesModel->getAllArticles(),
+                'villes' => $this->villesModel->getAllVilles(),
+                'articles' => $this->articlesModel->getAllArticles(),
                 'errors' => $errors,
                 'old' => [
                     'id_ville' => $id_ville,
@@ -137,11 +126,11 @@ class BesoinsController {
     }
 
     /**
-     * Affiche la liste des besoins (optionnel)
+     * Affiche la liste des besoins
      */
-    public function getBesoins() {
-        $model = new BesoinsModel(Flight::db());
-        $besoins = $model->getAllBesoinsWithDetails();
+    public function getBesoins()
+    {
+        $besoins = $this->besoinsModel->getAllBesoinsWithDetails();
         
         Flight::render('besoins/index', [
             'besoins' => $besoins
@@ -151,9 +140,9 @@ class BesoinsController {
     /**
      * Affiche les détails d'un besoin
      */
-    public function getBesoinById($id) {
-        $model = new BesoinsModel(Flight::db());
-        $besoin = $model->getBesoinById($id);
+    public function getBesoinById($id)
+    {
+        $besoin = $this->besoinsModel->getBesoinById($id);
         
         if (!$besoin) {
             Flight::halt(404, 'Besoin introuvable');
@@ -167,21 +156,15 @@ class BesoinsController {
     /**
      * Supprime un besoin
      */
-    public function deleteBesoin($id) {
-        $model = new BesoinsModel(Flight::db());
-        
-        // Récupérer l'ID de la ville pour la redirection
-        $besoin = $model->getBesoinById($id);
+    public function deleteBesoin($id)
+    {
+        $besoin = $this->besoinsModel->getBesoinById($id);
         $villeId = $besoin['id_ville'] ?? null;
         
-        $count = $model->deleteBesoin($id);
+        $count = $this->besoinsModel->deleteBesoin($id);
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if ($villeId) {
-                Flight::redirect('/villes/' . $villeId . '?success=besoin_supprime');
-            } else {
-                Flight::redirect('/besoins');
-            }
+            Flight::redirect('/besoins?success=besoin_supprime');
             return;
         }
         
@@ -191,9 +174,9 @@ class BesoinsController {
     /**
      * Page de confirmation de suppression
      */
-    public function confirmDeleteBesoin($id) {
-        $model = new BesoinsModel(Flight::db());
-        $besoin = $model->getBesoinById($id);
+    public function confirmDeleteBesoin($id)
+    {
+        $besoin = $this->besoinsModel->getBesoinById($id);
         
         if (!$besoin) {
             Flight::halt(404, 'Besoin introuvable');
@@ -203,7 +186,7 @@ class BesoinsController {
             'entity' => 'besoin',
             'id' => $id,
             'label' => 'Besoin: ' . $besoin['nom_article'] . ' - ' . $besoin['nom_ville'],
-            'back' => '/villes/' . $besoin['id_ville'],
+            'back' => '/besoins',
             'details' => $besoin
         ]);
     }
@@ -211,9 +194,8 @@ class BesoinsController {
     /**
      * Met à jour le statut d'un besoin
      */
-    public function updateStatut($id, $statut = null) {
-        $model = new BesoinsModel(Flight::db());
-        
+    public function updateStatut($id, $statut = null)
+    {
         if ($statut === null) {
             $statut = $_POST['statut'] ?? null;
         }
@@ -223,11 +205,10 @@ class BesoinsController {
             return;
         }
         
-        $count = $model->updateBesoinStatut($id, $statut);
+        $count = $this->besoinsModel->updateBesoinStatut($id, $statut);
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $besoin = $model->getBesoinById($id);
-            Flight::redirect('/villes/' . $besoin['id_ville']);
+            Flight::redirect('/besoins');
             return;
         }
         
@@ -237,16 +218,17 @@ class BesoinsController {
     /**
      * Met à jour le statut d'un besoin (alias pour la route)
      */
-    public function updateBesoinStatut($id) {
+    public function updateBesoinStatut($id)
+    {
         return $this->updateStatut($id);
     }
 
     /**
      * Récupère les besoins non satisfaits
      */
-    public function getBesoinsNonSatisfaits() {
-        $model = new BesoinsModel(Flight::db());
-        $besoins = $model->getBesoinsNonSatisfaits();
+    public function getBesoinsNonSatisfaits()
+    {
+        $besoins = $this->besoinsModel->getBesoinsNonSatisfaits();
         
         Flight::render('besoins/non-satisfaits', [
             'besoins' => $besoins
@@ -256,9 +238,9 @@ class BesoinsController {
     /**
      * Récupère le montant total
      */
-    public function getMontantTotal() {
-        $model = new BesoinsModel(Flight::db());
-        $total = $model->getMontantTotal();
+    public function getMontantTotal()
+    {
+        $total = $this->besoinsModel->getMontantTotal();
         
         Flight::json([
             'montant_total' => $total
@@ -268,9 +250,9 @@ class BesoinsController {
     /**
      * Récupère le montant d'un besoin
      */
-    public function getBesoinMontant($id) {
-        $model = new BesoinsModel(Flight::db());
-        $besoin = $model->getBesoinById($id);
+    public function getBesoinMontant($id)
+    {
+        $besoin = $this->besoinsModel->getBesoinById($id);
         
         if (!$besoin) {
             Flight::halt(404, 'Besoin introuvable');

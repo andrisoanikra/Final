@@ -4,10 +4,12 @@
  */
 ?>
 
+<?php include __DIR__ . '/../assets/inc/navbar.php'; ?>
+
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-12">
-            <h1>Liste des besoins</h1>
+            <h1>📋 Liste des besoins</h1>
             <a href="/besoin/create" class="btn btn-primary mb-3">Ajouter un besoin</a>
             <hr>
 
@@ -33,12 +35,11 @@
                     <table class="table table-striped table-hover">
                         <thead class="table-dark">
                             <tr>
+                                <th>ID</th>
                                 <th>Ville</th>
-                                <th>Article</th>
-                                <th>Type</th>
-                                <th>Quantité</th>
-                                <th>Prix unitaire</th>
-                                <th>Montant total</th>
+                                <th>Articles</th>
+                                <th>Types</th>
+                                <th>Description</th>
                                 <th>Urgence</th>
                                 <th>Statut</th>
                                 <th>Date</th>
@@ -48,12 +49,39 @@
                         <tbody>
                             <?php foreach ($besoins as $besoin): ?>
                                 <tr>
+                                    <td><?php echo htmlspecialchars($besoin['id_besoin']); ?></td>
                                     <td><?php echo htmlspecialchars($besoin['nom_ville']); ?></td>
-                                    <td><?php echo htmlspecialchars($besoin['nom_article']); ?></td>
-                                    <td><span class="badge bg-secondary"><?php echo htmlspecialchars($besoin['libelle_type'] ?? ''); ?></span></td>
-                                    <td><?php echo number_format($besoin['quantite'], 2, ',', ' '); ?></td>
-                                    <td><?php echo number_format($besoin['prix_unitaire'], 0, ',', ' '); ?> Ar</td>
-                                    <td><?php echo number_format($besoin['quantite'] * $besoin['prix_unitaire'], 0, ',', ' '); ?> Ar</td>
+                                    <td>
+                                        <?php 
+                                            if (!empty($besoin['articles'])) {
+                                                echo htmlspecialchars($besoin['articles']);
+                                            } else {
+                                                echo '<span class="text-muted">Aucun article</span>';
+                                            }
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php 
+                                            if (!empty($besoin['types'])) {
+                                                $types = explode(', ', $besoin['types']);
+                                                foreach (array_unique($types) as $type) {
+                                                    echo '<span class="badge bg-secondary me-1">' . htmlspecialchars($type) . '</span>';
+                                                }
+                                            } else {
+                                                echo '<span class="text-muted">-</span>';
+                                            }
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php 
+                                            if (!empty($besoin['description'])) {
+                                                echo htmlspecialchars(substr($besoin['description'], 0, 50));
+                                                if (strlen($besoin['description']) > 50) echo '...';
+                                            } else {
+                                                echo '<span class="text-muted">-</span>';
+                                            }
+                                        ?>
+                                    </td>
                                     <td>
                                         <?php 
                                             $urgenceClass = [
@@ -90,14 +118,68 @@
                                     </td>
                                     <td><?php echo date('d/m/Y H:i', strtotime($besoin['date_saisie'])); ?></td>
                                     <td>
-                                        <a href="/besoin/<?php echo $besoin['id_besoin']; ?>" class="btn btn-sm btn-info">Voir</a>
-                                        <a href="/besoin/<?php echo $besoin['id_besoin']; ?>/edit" class="btn btn-sm btn-warning">Modifier</a>
-                                        <a href="/besoin/<?php echo $besoin['id_besoin']; ?>/delete" class="btn btn-sm btn-danger">Supprimer</a>
+                                        <a href="/besoin/<?php echo $besoin['id_besoin']; ?>" class="btn btn-sm btn-info" title="Voir">
+                                            👁️
+                                        </a>
+                                        <a href="/besoin/<?php echo $besoin['id_besoin']; ?>/delete" class="btn btn-sm btn-danger" 
+                                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce besoin ?');" title="Supprimer">
+                                            🗑️
+                                        </a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Statistiques -->
+                <div class="row mt-4">
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">Total besoins</h5>
+                                <p class="card-text display-6"><?php echo count($besoins); ?></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center bg-danger text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">Besoins critiques</h5>
+                                <p class="card-text display-6">
+                                    <?php 
+                                        $critiques = array_filter($besoins, function($b) { 
+                                            return $b['urgence'] == 'critique'; 
+                                        });
+                                        echo count($critiques);
+                                    ?>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center bg-primary text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">Besoins en cours</h5>
+                                <p class="card-text display-6">
+                                    <?php 
+                                        $enCours = array_filter($besoins, function($b) { 
+                                            return $b['statut'] == 'en_cours'; 
+                                        });
+                                        echo count($enCours);
+                                    ?>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center bg-success text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">Total besoins</h5>
+                                <p class="card-text display-6"><?php echo count($besoins); ?></p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             <?php endif; ?>
         </div>

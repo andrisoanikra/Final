@@ -2,21 +2,23 @@
 
 namespace app\controllers;
 
+use Flight;
 use app\models\ArticlesModel;
-use flight\Engine;
 
-class ArticleController {
+class ArticleController
+{
+    protected $db;
+    protected $articlesModel;
 
-	protected Engine $app;
-
-	public function __construct($app) {
-		$this->app = $app;
-	}
-
-    public function getAllArticles() {
-        $articleModel = new ArticlesModel($this->app);
-        $articles = $articleModel->getAllArticles();
-        return $articles;
+    public function __construct()
+    {
+        $this->db = Flight::db();
+        $this->articlesModel = new ArticlesModel($this->db);
     }
 
+    public function getAllArticles()
+    {
+        $articles = $this->articlesModel->getAllArticles();
+        return $articles;
+    }
 }

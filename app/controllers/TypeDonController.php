@@ -2,24 +2,23 @@
 
 namespace app\controllers;
 
+use Flight;
 use app\models\TypeDonModel;
-use flight\Engine;
 
-class TypeDonController {
+class TypeDonController
+{
+    protected $db;
+    protected $typeDonModel;
 
-	protected Engine $app;
-
-	public function __construct($app) {
-		$this->app = $app;
-	}
-
-    public function getAllTypes() {
-        $typeDonModel = new TypeDonModel($this->app);
-        $typeDons = $typeDonModel->getAllTypes();
-        return $typeDons;
+    public function __construct()
+    {
+        $this->db = Flight::db();
+        $this->typeDonModel = new TypeDonModel($this->db);
     }
 
+    public function getAllTypes()
+    {
+        $typeDons = $this->typeDonModel->getAllTypes();
+        return $typeDons;
+    }
 }
-
-
-

@@ -101,7 +101,7 @@
 
                             <hr>
 
-                            <a href="/villes/<?php echo $besoin['id_ville']; ?>" class="btn btn-secondary btn-sm btn-block">Retour à la ville</a>
+                            <a href="/ville/<?php echo $besoin['id_ville']; ?>" class="btn btn-secondary btn-sm btn-block">Retour à la ville</a>
                             <a href="/besoins" class="btn btn-secondary btn-sm btn-block mt-2">Tous les besoins</a>
                         </div>
                     </div>

@@ -4,8 +4,11 @@
  */
 ?>
 
+<?php include __DIR__ . '/../assets/inc/navbar.php'; ?>
+
 <div class="container mt-5">
-    <div class="row">
+    <div class="⚠️ Besoins non satisfaits</h1>
+            <a href="/besoin/create" class="btn btn-primary mb-3">Ajouter un besoin</a
         <div class="col-md-12">
             <h1>Besoins non satisfaits</h1>
             <hr>
@@ -23,12 +26,11 @@
                     <table class="table table-striped table-hover">
                         <thead class="table-dark">
                             <tr>
+                                <th>ID</th>
                                 <th>Ville</th>
-                                <th>Article</th>
-                                <th>Type</th>
-                                <th>Quantité</th>
-                                <th>Prix unitaire</th>
-                                <th>Montant total</th>
+                                <th>Articles</th>
+                                <th>Types</th>
+                                <th>Description</th>
                                 <th>Urgence</th>
                                 <th>Statut</th>
                                 <th>Date</th>
@@ -38,12 +40,39 @@
                         <tbody>
                             <?php foreach ($besoins as $besoin): ?>
                                 <tr>
+                                    <td><?php echo htmlspecialchars($besoin['id_besoin']); ?></td>
                                     <td><?php echo htmlspecialchars($besoin['nom_ville']); ?></td>
-                                    <td><?php echo htmlspecialchars($besoin['nom_article']); ?></td>
-                                    <td><span class="badge bg-secondary"><?php echo htmlspecialchars($besoin['libelle_type'] ?? ''); ?></span></td>
-                                    <td><?php echo number_format($besoin['quantite'], 2, ',', ' '); ?></td>
-                                    <td><?php echo number_format($besoin['prix_unitaire'], 0, ',', ' '); ?> Ar</td>
-                                    <td><?php echo number_format($besoin['quantite'] * $besoin['prix_unitaire'], 0, ',', ' '); ?> Ar</td>
+                                    <td>
+                                        <?php 
+                                            if (!empty($besoin['articles'])) {
+                                                echo htmlspecialchars($besoin['articles']);
+                                            } else {
+                                                echo '<span class="text-muted">Aucun article</span>';
+                                            }
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php 
+                                            if (!empty($besoin['types'])) {
+                                                $types = explode(', ', $besoin['types']);
+                                                foreach (array_unique($types) as $type) {
+                                                    echo '<span class="badge bg-secondary me-1">' . htmlspecialchars($type) . '</span>';
+                                                }
+                                            } else {
+                                                echo '<span class="text-muted">-</span>';
+                                            }
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php 
+                                            if (!empty($besoin['description'])) {
+                                                echo htmlspecialchars(substr($besoin['description'], 0, 50));
+                                                if (strlen($besoin['description']) > 50) echo '...';
+                                            } else {
+                                                echo '<span class="text-muted">-</span>';
+                                            }
+                                        ?>
+                                    </td>
                                     <td>
                                         <?php 
                                             $urgenceClass = [
@@ -80,8 +109,13 @@
                                     </td>
                                     <td><?php echo date('d/m/Y H:i', strtotime($besoin['date_saisie'])); ?></td>
                                     <td>
-                                        <a href="/besoin/<?php echo $besoin['id_besoin']; ?>" class="btn btn-sm btn-info">Voir</a>
-                                        <a href="/besoin/<?php echo $besoin['id_besoin']; ?>/delete" class="btn btn-sm btn-danger">Supprimer</a>
+                                        <a href="/besoin/<?php echo $besoin['id_besoin']; ?>" class="btn btn-sm btn-info" title="Voir">
+                                            👁️
+                                        </a>
+                                        <a href="/besoin/<?php echo $besoin['id_besoin']; ?>/delete" class="btn btn-sm btn-danger" 
+                                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce besoin ?');" title="Supprimer">
+                                            🗑️
+                                        </a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
