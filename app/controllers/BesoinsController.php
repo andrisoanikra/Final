@@ -13,6 +13,7 @@ class BesoinsController
     protected $besoinsModel;
     protected $villesModel;
     protected $articlesModel;
+    private $model;
 
     public function __construct()
     {
@@ -20,6 +21,7 @@ class BesoinsController
         $this->besoinsModel = new BesoinsModel($this->db);
         $this->villesModel = new VillesModel($this->db);
         $this->articlesModel = new ArticlesModel($this->db);
+        $this->model = new BesoinsModel($this->db);
     }
 
     /**
@@ -267,4 +269,16 @@ class BesoinsController
             'montant_total' => $montant
         ]);
     }
+
+      /**
+     * Affiche la liste des besoins via v_besoins_par_ville
+     */
+  public function listeBesoins()
+{
+    // Maka données avy amin'ny modèle
+    $besoins = $this->besoinsModel->getAllBesoins();
+
+    // Charger la vue (mampita données)
+    require_once __DIR__ . '/../views/besoins/liste.php';
+}
 }

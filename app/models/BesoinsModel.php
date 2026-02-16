@@ -10,6 +10,34 @@ class BesoinsModel
         $this->db = $db;
     }
 
+
+    /**
+     * Récupère tous les besoins avec détails
+     */
+    public function getAllBesoins()
+    {
+        $sql = "SELECT * FROM v_besoins_par_ville ORDER BY date_saisie DESC";
+        return $this->db->runQuery($sql)->fetchAll();
+    }
+
+    /**
+     * Récupère les besoins par ville
+     */
+    public function getBesoinsByVille($villeId)
+    {
+        $sql = "SELECT * FROM v_besoins_par_ville WHERE id_ville = ? ORDER BY date_saisie DESC";
+        return $this->db->runQuery($sql, [$villeId])->fetchAll();
+    }
+
+    /**
+     * Récupère les besoins par statut
+     */
+    public function getBesoinsByStatut($statut)
+    {
+        $sql = "SELECT * FROM v_besoins_par_ville WHERE statut = ? ORDER BY date_saisie DESC";
+        return $this->db->runQuery($sql, [$statut])->fetchAll();
+    }
+
     public function getBesoins()
     {
         $tmt = $this->db->runQuery("SELECT b.*, v.nom_ville, GROUP_CONCAT(a.nom_article SEPARATOR ', ') as articles, 
@@ -55,20 +83,20 @@ class BesoinsModel
         return $tmt->fetchAll();
     }
 
-    public function getBesoinsByVille($id_ville)
-    {
-        $tmt = $this->db->runQuery("SELECT b.*, v.nom_ville, GROUP_CONCAT(a.nom_article SEPARATOR ', ') as articles,
-            GROUP_CONCAT(tb.libelle_type SEPARATOR ', ') as types
-        FROM besoins b
-        LEFT JOIN villes v ON b.id_ville = v.id_ville
-        LEFT JOIN besoin_articles ba ON b.id_besoin = ba.id_besoin
-        LEFT JOIN articles a ON ba.id_article = a.id_article
-        LEFT JOIN type_besoin tb ON a.id_type_besoin = tb.id_type_besoin
-        WHERE b.id_ville = ?
-        GROUP BY b.id_besoin
-        ORDER BY b.date_saisie DESC;", [$id_ville]);
-        return $tmt->fetchAll();
-    }
+    // public function getBesoinsByVille($id_ville)
+    // {
+    //     $tmt = $this->db->runQuery("SELECT b.*, v.nom_ville, GROUP_CONCAT(a.nom_article SEPARATOR ', ') as articles,
+    //         GROUP_CONCAT(tb.libelle_type SEPARATOR ', ') as types
+    //     FROM besoins b
+    //     LEFT JOIN villes v ON b.id_ville = v.id_ville
+    //     LEFT JOIN besoin_articles ba ON b.id_besoin = ba.id_besoin
+    //     LEFT JOIN articles a ON ba.id_article = a.id_article
+    //     LEFT JOIN type_besoin tb ON a.id_type_besoin = tb.id_type_besoin
+    //     WHERE b.id_ville = ?
+    //     GROUP BY b.id_besoin
+    //     ORDER BY b.date_saisie DESC;", [$id_ville]);
+    //     return $tmt->fetchAll();
+    // }
 
     public function getBesoinsByArticle($id_article)
     {
@@ -161,6 +189,8 @@ class BesoinsModel
         $tmt = $this->db->runQuery("SELECT SUM(ba.quantite * ba.prix_unitaire) AS total FROM besoin_articles ba;");
         return $tmt->fetch();
     }
+
+
 
 }
 
