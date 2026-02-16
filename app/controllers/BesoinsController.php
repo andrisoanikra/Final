@@ -37,42 +37,73 @@ class BesoinsController
     }
 
     /**
-     * Enregistre un nouveau besoin avec ses articles
+     * Enregistre un ou plusieurs nouveaux besoins avec leurs articles
      */
     public function storeBesoin()
     {
-        $id_ville = $_POST['id_ville'] ?? null;
-        $description = $_POST['description'] ?? null;
-        $urgence = $_POST['urgence'] ?? 'normale';
-        $id_articles = $_POST['id_article'] ?? [];
-        $quantites = $_POST['quantite'] ?? [];
-        $prix_unitaires = $_POST['prix_unitaire'] ?? [];
+        $besoins = $_POST['besoins'] ?? [];
 
         // Validation
         $errors = [];
-        if (empty($id_ville)) {
-            $errors[] = 'Veuillez sélectionner une ville';
-        }
         
-        // Valider les articles
-        if (empty($id_articles) || !is_array($id_articles)) {
-            $errors[] = 'Veuillez ajouter au moins un article';
-        } else {
-            foreach ($id_articles as $index => $id_article) {
+        if (empty($besoins) || !is_array($besoins)) {
+            $errors[] = 'Veuillez ajouter au moins un besoin';
+        }
+
+        // Valider chaque besoin
+        $besoinsValides = [];
+        foreach ($besoins as $index => $besoin) {
+            $id_ville = $besoin['id_ville'] ?? null;
+            $description = $besoin['description'] ?? null;
+            $urgence = $besoin['urgence'] ?? 'normale';
+            $articles = $besoin['articles'] ?? [];
+
+            if (empty($id_ville)) {
+                $errors[] = "Besoin #" . ($index + 1) . " : Veuillez sélectionner une ville";
+                continue;
+            }
+
+            if (empty($articles) || !is_array($articles)) {
+                $errors[] = "Besoin #" . ($index + 1) . " : Veuillez ajouter au moins un article";
+                continue;
+            }
+
+            // Valider les articles
+            $articlesValides = [];
+            foreach ($articles as $artIndex => $article) {
+                $id_article = $article['id_article'] ?? null;
+                $quantite = $article['quantite'] ?? null;
+                $prix_unitaire = $article['prix_unitaire'] ?? null;
+
                 if (empty($id_article)) {
-                    $errors[] = 'Veuillez sélectionner un article pour chaque ligne';
-                    break;
+                    $errors[] = "Besoin #" . ($index + 1) . ", Article #" . ($artIndex + 1) . " : Veuillez sélectionner un article";
+                    continue;
                 }
-                
-                $quantite = $quantites[$index] ?? null;
-                $prix = $prix_unitaires[$index] ?? null;
-                
+
                 if (empty($quantite) || $quantite <= 0) {
-                    $errors[] = 'La quantité de l\'article ' . ($index + 1) . ' doit être supérieure à 0';
+                    $errors[] = "Besoin #" . ($index + 1) . ", Article #" . ($artIndex + 1) . " : La quantité doit être supérieure à 0";
+                    continue;
                 }
-                if (empty($prix) || $prix <= 0) {
-                    $errors[] = 'Le prix unitaire de l\'article ' . ($index + 1) . ' doit être supérieur à 0';
+
+                if (empty($prix_unitaire) || $prix_unitaire <= 0) {
+                    $errors[] = "Besoin #" . ($index + 1) . ", Article #" . ($artIndex + 1) . " : Le prix unitaire doit être supérieur à 0";
+                    continue;
                 }
+
+                $articlesValides[] = [
+                    'id_article' => $id_article,
+                    'quantite' => $quantite,
+                    'prix_unitaire' => $prix_unitaire
+                ];
+            }
+
+            if (!empty($articlesValides)) {
+                $besoinsValides[] = [
+                    'id_ville' => $id_ville,
+                    'description' => $description,
+                    'urgence' => $urgence,
+                    'articles' => $articlesValides
+                ];
             }
         }
 
@@ -80,47 +111,47 @@ class BesoinsController
             Flight::render('besoins/create', [
                 'villes' => $this->villesModel->getAllVilles(),
                 'articles' => $this->articlesModel->getAllArticles(),
-                'errors' => $errors,
-                'old' => [
-                    'id_ville' => $id_ville,
-                    'description' => $description,
-                    'urgence' => $urgence
-                ]
+                'errors' => $errors
             ]);
             return;
         }
 
-        // Créer le besoin
-        $besoinId = $this->besoinsModel->addBesoin(
-            $id_ville,
-            $description,
-            $urgence
-        );
-        
-        if ($besoinId) {
-            // Ajouter les articles au besoin
-            foreach ($id_articles as $index => $id_article) {
-                $this->besoinsModel->addArticleToBesoin(
-                    $besoinId,
-                    $id_article,
-                    $quantites[$index],
-                    $prix_unitaires[$index]
-                );
-            }
+        // Créer tous les besoins
+        $nbBesoinsAjoutes = 0;
+        foreach ($besoinsValides as $besoinData) {
+            // Créer le besoin
+            $besoinId = $this->besoinsModel->addBesoin(
+                $besoinData['id_ville'],
+                $besoinData['description'],
+                $besoinData['urgence']
+            );
             
-            Flight::redirect('/besoins?success=besoin_ajoute');
+            if ($besoinId) {
+                // Ajouter les articles au besoin
+                foreach ($besoinData['articles'] as $article) {
+                    $this->besoinsModel->addArticleToBesoin(
+                        $besoinId,
+                        $article['id_article'],
+                        $article['quantite'],
+                        $article['prix_unitaire']
+                    );
+                }
+                $nbBesoinsAjoutes++;
+            }
+        }
+
+        if ($nbBesoinsAjoutes > 0) {
+            $message = $nbBesoinsAjoutes > 1 
+                ? "$nbBesoinsAjoutes besoins ajoutés avec succès !" 
+                : "Besoin ajouté avec succès !";
+            Flight::redirect('/besoins?success=besoin_ajoute&message=' . urlencode($message));
         } else {
-            $errors[] = 'Erreur lors de l\'ajout du besoin';
+            $errors[] = 'Erreur lors de l\'ajout des besoins';
             
             Flight::render('besoins/create', [
                 'villes' => $this->villesModel->getAllVilles(),
                 'articles' => $this->articlesModel->getAllArticles(),
-                'errors' => $errors,
-                'old' => [
-                    'id_ville' => $id_ville,
-                    'description' => $description,
-                    'urgence' => $urgence
-                ]
+                'errors' => $errors
             ]);
         }
     }
@@ -265,6 +296,30 @@ class BesoinsController
             'quantite' => $besoin['quantite'],
             'prix_unitaire' => $besoin['prix_unitaire'],
             'montant_total' => $montant
+        ]);
+    }
+
+    /**
+     * Affiche les villes satisfaites (tous les besoins couverts)
+     */
+    public function getVillesSatisfaites()
+    {
+        $villes = $this->besoinsModel->getVillesSatisfaites();
+        
+        Flight::render('besoins/villes-satisfaites', [
+            'villes' => $villes
+        ]);
+    }
+
+    /**
+     * Affiche les besoins critiques de type matériel/nature
+     */
+    public function getBesoinsCritiquesMateriels()
+    {
+        $besoins = $this->besoinsModel->getBesoinsCritiquesMateriels();
+        
+        Flight::render('besoins/critiques-materiels', [
+            'besoins' => $besoins
         ]);
     }
 }

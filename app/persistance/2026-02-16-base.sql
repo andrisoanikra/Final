@@ -42,6 +42,7 @@ CREATE TABLE articles (
     nom_article VARCHAR(100) NOT NULL,
     id_type_besoin INT,
     description TEXT,
+    prix_unitaire DECIMAL(15,2) NOT NULL,
     FOREIGN KEY (id_type_besoin) REFERENCES type_besoin(id_type_besoin)
 );
 

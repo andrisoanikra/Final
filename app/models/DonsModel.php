@@ -159,14 +159,22 @@ class DonsModel
      */
     private function dispatcherDonArgent($id_don, $montant_disponible)
     {
-        // Récupérer TOUS les besoins non satisfaits (nature, matériaux, etc.) par ordre de date
+        // Récupérer TOUS les besoins non satisfaits, en excluant les villes dont tous les besoins sont couverts
         $tmt = $this->db->runQuery("
-            SELECT ba.*, b.id_besoin, b.date_saisie, b.urgence, a.nom_article, tb.libelle_type
+            SELECT ba.*, b.id_besoin, b.id_ville, b.date_saisie, b.urgence, a.nom_article, tb.libelle_type, v.nom_ville
             FROM besoin_articles ba
             JOIN besoins b ON ba.id_besoin = b.id_besoin
             JOIN articles a ON ba.id_article = a.id_article
             JOIN type_besoin tb ON a.id_type_besoin = tb.id_type_besoin
+            JOIN villes v ON b.id_ville = v.id_ville
             WHERE b.statut IN ('en_cours', 'partiel')
+            AND b.id_ville NOT IN (
+                -- Exclure les villes dont TOUS les besoins sont satisfaits
+                SELECT id_ville 
+                FROM besoins 
+                GROUP BY id_ville 
+                HAVING COUNT(*) = SUM(CASE WHEN statut = 'satisfait' THEN 1 ELSE 0 END)
+            )
             ORDER BY 
                 CASE b.urgence
                     WHEN 'critique' THEN 1
@@ -179,6 +187,7 @@ class DonsModel
 
         $montant_restant = $montant_disponible;
         $dispatches = [];
+        $villes_satisfaites = [];
 
         foreach ($besoins as $besoin) {
             if ($montant_restant <= 0) break;
@@ -209,15 +218,48 @@ class DonsModel
             $dispatches[] = [
                 'id_besoin' => $besoin['id_besoin'],
                 'article' => $besoin['nom_article'],
-                'montant' => $montant_a_affecter
+                'montant' => $montant_a_affecter,
+                'ville' => $besoin['nom_ville']
             ];
 
             $montant_restant -= $montant_a_affecter;
 
+            // Vérifier si TOUS les articles de ce besoin sont maintenant couverts
+            $tmt_verif_besoin = $this->db->runQuery("
+                SELECT 
+                    SUM(ba.quantite * ba.prix_unitaire) as montant_total_besoin,
+                    COALESCE((
+                        SELECT SUM(dd.montant_affecte) + SUM(
+                            CASE 
+                                WHEN d.id_article IS NOT NULL 
+                                THEN dd.quantite_affectee * ba_prix.prix_unitaire 
+                                ELSE 0 
+                            END
+                        )
+                        FROM dispatch_dons dd
+                        JOIN dons d ON dd.id_don = d.id_don
+                        LEFT JOIN besoin_articles ba_prix ON dd.id_besoin = ba_prix.id_besoin AND d.id_article = ba_prix.id_article
+                        WHERE dd.id_besoin = ?
+                    ), 0) as montant_total_recu
+                FROM besoin_articles ba
+                WHERE ba.id_besoin = ?
+            ", [$besoin['id_besoin'], $besoin['id_besoin']]);
+            $verif_besoin = $tmt_verif_besoin->fetch();
+            
             // Mettre à jour le statut du besoin
-            $total_affecte_maintenant = $deja_affecte + $montant_a_affecter;
-            if ($total_affecte_maintenant >= $montant_besoin) {
+            if ($verif_besoin['montant_total_recu'] >= $verif_besoin['montant_total_besoin']) {
                 $this->db->runQuery("UPDATE besoins SET statut = 'satisfait' WHERE id_besoin = ?", [$besoin['id_besoin']]);
+                
+                // Vérifier si tous les besoins de cette ville sont maintenant satisfaits
+                $tmt_verif_ville = $this->db->runQuery("
+                    SELECT COUNT(*) as total, SUM(CASE WHEN statut = 'satisfait' THEN 1 ELSE 0 END) as satisfaits
+                    FROM besoins WHERE id_ville = ?
+                ", [$besoin['id_ville']]);
+                $verif_ville = $tmt_verif_ville->fetch();
+                
+                if ($verif_ville['total'] == $verif_ville['satisfaits'] && !in_array($besoin['nom_ville'], $villes_satisfaites)) {
+                    $villes_satisfaites[] = $besoin['nom_ville'];
+                }
             } else {
                 $this->db->runQuery("UPDATE besoins SET statut = 'partiel' WHERE id_besoin = ?", [$besoin['id_besoin']]);
             }
@@ -234,7 +276,8 @@ class DonsModel
             'success' => true,
             'dispatches' => $dispatches,
             'montant_affecte' => $montant_disponible - $montant_restant,
-            'montant_restant' => $montant_restant
+            'montant_restant' => $montant_restant,
+            'villes_satisfaites' => $villes_satisfaites
         ];
     }
 
@@ -243,14 +286,22 @@ class DonsModel
      */
     private function dispatcherDonMateriel($id_don, $id_article, $quantite_disponible)
     {
-        // Récupérer tous les besoins de cet article non satisfaits par ordre de date et urgence
+        // Récupérer tous les besoins de cet article non satisfaits, en excluant les villes entièrement couvertes
         $tmt = $this->db->runQuery("
-            SELECT ba.*, b.id_besoin, b.date_saisie, b.urgence, a.nom_article
+            SELECT ba.*, b.id_besoin, b.id_ville, b.date_saisie, b.urgence, a.nom_article, v.nom_ville
             FROM besoin_articles ba
             JOIN besoins b ON ba.id_besoin = b.id_besoin
             JOIN articles a ON ba.id_article = a.id_article
+            JOIN villes v ON b.id_ville = v.id_ville
             WHERE ba.id_article = ? 
             AND b.statut IN ('en_cours', 'partiel')
+            AND b.id_ville NOT IN (
+                -- Exclure les villes dont TOUS les besoins sont satisfaits
+                SELECT id_ville 
+                FROM besoins 
+                GROUP BY id_ville 
+                HAVING COUNT(*) = SUM(CASE WHEN statut = 'satisfait' THEN 1 ELSE 0 END)
+            )
             ORDER BY 
                 CASE b.urgence
                     WHEN 'critique' THEN 1
@@ -263,6 +314,7 @@ class DonsModel
 
         $quantite_restante = $quantite_disponible;
         $dispatches = [];
+        $villes_satisfaites = [];
 
         foreach ($besoins as $besoin) {
             if ($quantite_restante <= 0) break;
@@ -293,7 +345,8 @@ class DonsModel
             $dispatches[] = [
                 'id_besoin' => $besoin['id_besoin'],
                 'article' => $besoin['nom_article'],
-                'quantite' => $quantite_a_affecter
+                'quantite' => $quantite_a_affecter,
+                'ville' => $besoin['nom_ville']
             ];
 
             $quantite_restante -= $quantite_a_affecter;
@@ -301,17 +354,38 @@ class DonsModel
             // Vérifier si TOUS les articles du besoin sont satisfaits
             $tmt_verif = $this->db->runQuery("
                 SELECT 
-                    SUM(ba.quantite) as total_besoin,
-                    (SELECT COALESCE(SUM(dd.quantite_affectee), 0) + COALESCE(SUM(dd.montant_affecte / ba.prix_unitaire), 0)
-                     FROM dispatch_dons dd
-                     WHERE dd.id_besoin = ba.id_besoin) as total_recu
+                    SUM(ba.quantite * ba.prix_unitaire) as montant_total_besoin,
+                    COALESCE((
+                        SELECT SUM(dd.montant_affecte) + SUM(
+                            CASE 
+                                WHEN d.id_article IS NOT NULL 
+                                THEN dd.quantite_affectee * ba_prix.prix_unitaire 
+                                ELSE 0 
+                            END
+                        )
+                        FROM dispatch_dons dd
+                        JOIN dons d ON dd.id_don = d.id_don
+                        LEFT JOIN besoin_articles ba_prix ON dd.id_besoin = ba_prix.id_besoin AND d.id_article = ba_prix.id_article
+                        WHERE dd.id_besoin = ?
+                    ), 0) as montant_total_recu
                 FROM besoin_articles ba
                 WHERE ba.id_besoin = ?
-            ", [$besoin['id_besoin']]);
+            ", [$besoin['id_besoin'], $besoin['id_besoin']]);
             $verif = $tmt_verif->fetch();
             
-            if ($verif['total_recu'] >= $verif['total_besoin']) {
+            if ($verif['montant_total_recu'] >= $verif['montant_total_besoin']) {
                 $this->db->runQuery("UPDATE besoins SET statut = 'satisfait' WHERE id_besoin = ?", [$besoin['id_besoin']]);
+                
+                // Vérifier si tous les besoins de cette ville sont maintenant satisfaits
+                $tmt_verif_ville = $this->db->runQuery("
+                    SELECT COUNT(*) as total, SUM(CASE WHEN statut = 'satisfait' THEN 1 ELSE 0 END) as satisfaits
+                    FROM besoins WHERE id_ville = ?
+                ", [$besoin['id_ville']]);
+                $verif_ville = $tmt_verif_ville->fetch();
+                
+                if ($verif_ville['total'] == $verif_ville['satisfaits'] && !in_array($besoin['nom_ville'], $villes_satisfaites)) {
+                    $villes_satisfaites[] = $besoin['nom_ville'];
+                }
             } else {
                 $this->db->runQuery("UPDATE besoins SET statut = 'partiel' WHERE id_besoin = ?", [$besoin['id_besoin']]);
             }
@@ -328,7 +402,8 @@ class DonsModel
             'success' => true,
             'dispatches' => $dispatches,
             'quantite_affectee' => $quantite_disponible - $quantite_restante,
-            'quantite_restante' => $quantite_restante
+            'quantite_restante' => $quantite_restante,
+            'villes_satisfaites' => $villes_satisfaites
         ];
     }
 }

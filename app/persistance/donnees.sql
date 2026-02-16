@@ -21,20 +21,20 @@ INSERT INTO villes (nom_ville, id_region, description, population) VALUES
 -- ========================================
 -- 3. ARTICLES
 -- ========================================
-INSERT INTO articles (nom_article, id_type_besoin, description) VALUES 
--- Articles de type "nature" (1)
-('Riz', 1, 'Riz blanc de bonne qualité'),
-('Haricots', 1, 'Haricots rouges'),
-('Huile de cuisine', 1, 'Huile végétale pour la cuisine'),
-('Sucre', 1, 'Sucre blanc cristallisé'),
-('Farine de blé', 1, 'Farine blanche pour pain et pâtisserie'),
 
--- Articles de type "materiau" (2)
-('Tôle ondulée', 2, 'Tôle galvanisée pour toiture'),
-('Ciment', 2, 'Ciment gris pour construction'),
-('Clous', 2, 'Clous de construction de différentes tailles'),
-('Bois de construction', 2, 'Planches et poutres en bois'),
-('Briques', 2, 'Briques cuites pour maçonnerie');
+INSERT INTO articles (nom_article, id_type_besoin, description, prix_unitaire) VALUES 
+-- Articles de type "nature" (1)
+('Riz', 1, 'Riz blanc de bonne qualité', 2500),
+('Haricots', 1, 'Haricots rouges de qualité supérieure', 4000),
+('Huile de cuisine', 1, 'Huile végétale de qualité alimentaire', 15000),
+('Sucre', 1, 'Sucre blanc raffiné', 8000),
+('Farine', 1, 'Farine de blé de bonne qualité', 5000),
+-- Articles de type "matériel" (2)
+('Tôles ondulées', 2, 'Tôles ondulées en acier galvanisé', 55000),
+('Ciment', 2, 'Ciment Portland standard', 45000),
+('Clous', 2, 'Clous de construction standard', 500),
+('Bois (m3)', 2, 'Bois brut pour construction', 35000),
+('Briques', 2, 'Briques en terre cuite standard', 12000);
 
 -- ========================================
 -- 4. BESOINS
@@ -125,3 +125,4 @@ SELECT d.id_don, td.libelle_type, COALESCE(a.nom_article, 'Argent') as article,
 FROM dons d
 JOIN type_don td ON d.id_type_don = td.id_type_don
 LEFT JOIN articles a ON d.id_article = a.id_article;
+

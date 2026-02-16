@@ -7,6 +7,7 @@ use app\controllers\TypeDonController;
 use app\controllers\ArticleController;
 use app\controllers\DonsController;
 use app\controllers\TableauBordController;
+use app\controllers\AchatsController;
 use app\middlewares\SecurityHeadersMiddleware;
 use flight\Engine;
 use flight\net\Router;
@@ -47,6 +48,8 @@ $router->group('/', function (Router $router) use ($app) {
 
 	// Filtres / statistiques
 	$router->get('besoins/non-satisfaits', [BesoinsController::class, 'getBesoinsNonSatisfaits']);
+	$router->get('besoins/villes-satisfaites', [BesoinsController::class, 'getVillesSatisfaites']);
+	$router->get('besoins/critiques-materiels', [BesoinsController::class, 'getBesoinsCritiquesMateriels']);
 	$router->get('besoins/montant-total', [BesoinsController::class, 'getMontantTotal']);
 
 	/* =======================
@@ -111,5 +114,21 @@ $router->group('/', function (Router $router) use ($app) {
 	$router->get('articles/modifier/@id', [ArticlesController::class, 'modifier']);
 	$router->post('articles/update/@id', [ArticlesController::class, 'update']);
 	$router->get('articles/supprimer/@id', [ArticlesController::class, 'supprimer']);
+
+	/* =======================
+	   ACHATS
+	   ======================= */
+
+	// Formulaire et création d'achat
+	$router->get('achat/formulaire/@id_besoin', [AchatsController::class, 'formulaireAchat']);
+	$router->post('achat/create', [AchatsController::class, 'createAchatSimule']);
+
+	// Simulation et validation
+	$router->get('achats/simulation', [AchatsController::class, 'pageSimulation']);
+	$router->post('achat/valider/@id_achat', [AchatsController::class, 'validerAchat']);
+	$router->post('achat/supprimer/@id_achat', [AchatsController::class, 'supprimerAchatSimule']);
+
+	// Configuration
+	$router->post('achats/config', [AchatsController::class, 'configurerFrais']);
 
 }, [new SecurityHeadersMiddleware($app)]);
