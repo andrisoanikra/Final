@@ -115,3 +115,6 @@ $app->register('db', $pdoClass, [ $dsn, $config['database']['user'] ?? null, $co
 // $app->register('redis', Redis::class, [ $config['redis']['host'], $config['redis']['port'] ]);
 
 // Add more service registrations below as needed
+$app->map('runQuery', function($sql, $params = []) use ($app) {
+    return $app->db()->runQuery($sql, $params);
+});

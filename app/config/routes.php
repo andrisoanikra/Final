@@ -6,6 +6,7 @@ use app\controllers\LivraisonsController;
 use app\middlewares\SecurityHeadersMiddleware;
 use flight\Engine;
 use flight\net\Router;
+use app\controllers\ArticlesController;
 
 /** 
  * @var Router $router 
@@ -61,5 +62,13 @@ $router->group('/', function (Router $router) use ($app) {
 	$router->post('ville/@id/delete', [VillesController::class, 'deleteVille']);
 	$router->get('ville/@id/delete', [VillesController::class, 'confirmDeleteVille']);
 	$router->get('ville/@id', [VillesController::class, 'getVilleById']);
+
+
+   $router->get('articles', [ArticlesController::class, 'index']);
+    $router->get('articles/ajouter', [ArticlesController::class, 'ajouter']);
+    $router->post('articles/save', [ArticlesController::class, 'save']);
+    $router->get('articles/modifier/@id', [ArticlesController::class, 'modifier']);
+    $router->post('articles/update/@id', [ArticlesController::class, 'update']);
+    $router->get('articles/supprimer/@id', [ArticlesController::class, 'supprimer']);
 
 }, [new SecurityHeadersMiddleware($app)]);
