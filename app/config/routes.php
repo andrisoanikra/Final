@@ -1,6 +1,8 @@
 <?php
 
 use app\controllers\LivraisonsController;
+use app\controllers\TypeDonController;
+use app\controllers\ArticleController;
 use app\middlewares\SecurityHeadersMiddleware;
 use flight\Engine;
 use flight\net\Router;
@@ -11,6 +13,17 @@ use flight\net\Router;
  */
 
 $router->group('/', function (Router $router) use ($app) {
+
+	$router->get('/formulaire-don', function() use ($app) {
+	$typeDonController = new TypeDonController($app);
+	$typeDons = $typeDonController->getAllTypes();
+	$articleController = new ArticleController($app);
+	$articles = $articleController->getAllArticles();
+    $app->render('formulaire-don', [
+        'typeDons' => $typeDons,
+        'articles' => $articles
+    ]);
+});
 
     // Accueil
    	$router->get('', [BesoinsController::class, 'getBesoins']);
