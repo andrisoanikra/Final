@@ -51,14 +51,23 @@ CREATE TABLE articles (
 CREATE TABLE besoins (
     id_besoin INT PRIMARY KEY AUTO_INCREMENT,
     id_ville INT,
-    id_article INT,
-    quantite DECIMAL(15,2) NOT NULL,
-    prix_unitaire DECIMAL(15,2) NOT NULL,
     description TEXT,
     urgence VARCHAR(20) DEFAULT 'normale', -- 'normale', 'urgente', 'critique'
     date_saisie DATETIME DEFAULT CURRENT_TIMESTAMP,
     statut VARCHAR(20) DEFAULT 'en_cours', -- 'en_cours', 'satisfait', 'partiel'
-    FOREIGN KEY (id_ville) REFERENCES villes(id_ville),
+    FOREIGN KEY (id_ville) REFERENCES villes(id_ville)
+);
+
+-- --------------------------------------------------------
+-- Table: besoin_articles (lier plusieurs articles à un besoin)
+-- --------------------------------------------------------
+CREATE TABLE besoin_articles (
+    id_besoin_article INT PRIMARY KEY AUTO_INCREMENT,
+    id_besoin INT NOT NULL,
+    id_article INT NOT NULL,
+    quantite DECIMAL(15,2) NOT NULL,
+    prix_unitaire DECIMAL(15,2) NOT NULL,
+    FOREIGN KEY (id_besoin) REFERENCES besoins(id_besoin) ON DELETE CASCADE,
     FOREIGN KEY (id_article) REFERENCES articles(id_article)
 );
 
