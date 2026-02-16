@@ -10,6 +10,7 @@ use app\controllers\TableauBordController;
 use app\middlewares\SecurityHeadersMiddleware;
 use flight\Engine;
 use flight\net\Router;
+use app\controllers\ArticlesController;
 
 /** 
  * @var Router $router 
@@ -99,5 +100,16 @@ $router->group('/', function (Router $router) use ($app) {
 	// Suppression
 	$router->delete('don/@id', [DonsController::class, 'deleteDon']);
 	$router->post('don/@id/delete', [DonsController::class, 'deleteDon']);
+
+	/* =======================
+	   ARTICLES
+	   ======================= */
+
+	$router->get('articles', [ArticlesController::class, 'index']);
+	$router->get('articles/ajouter', [ArticlesController::class, 'ajouter']);
+	$router->post('articles/save', [ArticlesController::class, 'save']);
+	$router->get('articles/modifier/@id', [ArticlesController::class, 'modifier']);
+	$router->post('articles/update/@id', [ArticlesController::class, 'update']);
+	$router->get('articles/supprimer/@id', [ArticlesController::class, 'supprimer']);
 
 }, [new SecurityHeadersMiddleware($app)]);
