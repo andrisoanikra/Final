@@ -1,0 +1,417 @@
+/* Formulaire de création de besoin - Styles personnalisés */
+
+:root {
+    --primary-color: #0d6efd;
+    --danger-color: #dc3545;
+    --success-color: #198754;
+    --warning-color: #ffc107;
+    --light-color: #f8f9fa;
+    --dark-color: #212529;
+    --border-radius: 8px;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Container principal */
+.besoin-form-container {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 40px 0;
+}
+
+.besoin-form-wrapper {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-hover);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.besoin-form-wrapper:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Header du formulaire */
+.besoin-form-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+.besoin-form-header h1 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.besoin-form-header .subtitle {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin-top: 8px;
+}
+
+/* Body du formulaire */
+.besoin-form-body {
+    padding: 40px;
+}
+
+/* Form groups */
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: var(--dark-color);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.95rem;
+}
+
+.form-group .text-danger {
+    color: var(--danger-color);
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+/* Contrôles de formulaire */
+.form-control,
+.form-select {
+    border: 2px solid #e9ecef;
+    border-radius: var(--border-radius);
+    padding: 12px 15px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
+.form-control::placeholder {
+    color: #adb5bd;
+}
+
+/* Section Articles */
+.articles-section {
+    background-color: var(--light-color);
+    padding: 25px;
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--primary-color);
+}
+
+.articles-section label {
+    color: var(--dark-color);
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+#articles-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+/* Article Item */
+.article-item {
+    background: white;
+    border: 2px solid #dee2e6;
+    border-radius: var(--border-radius);
+    padding: 20px;
+    transition: all 0.3s ease;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.article-item:hover {
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow);
+}
+
+.article-item .row {
+    align-items: flex-end;
+    gap: 15px;
+}
+
+.article-item .col-md-5,
+.article-item .col-md-2,
+.article-item .col-md-3,
+.article-item .col-md-2 {
+    display: flex;
+    flex-direction: column;
+}
+
+.article-item label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #495057;
+}
+
+.article-item .form-control {
+    border: 1.5px solid #dee2e6;
+}
+
+.article-item .form-control:focus {
+    border-color: var(--primary-color);
+}
+
+/* Boutons */
+.btn {
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.btn:focus {
+    box-shadow: none;
+    outline: 2px solid;
+    outline-offset: 2px;
+}
+
+/* Bouton Primaire */
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #5568d3 0%, #6a3f92 100%);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+/* Bouton Secondaire */
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+}
+
+/* Bouton Danger */
+.btn-danger {
+    background: var(--danger-color);
+    color: white;
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 0.8rem;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+}
+
+.btn-danger:active {
+    transform: translateY(0);
+}
+
+/* Bouton Ajouter Article */
+#add-article-btn {
+    background: var(--success-color);
+    color: white;
+    margin-top: 10px;
+    width: 100%;
+}
+
+#add-article-btn:hover {
+    background: #157347;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(25, 135, 84, 0.4);
+}
+
+/* Groupe de boutons action */
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 2px solid #dee2e6;
+}
+
+.form-actions .btn {
+    flex: 1;
+    padding: 14px 24px;
+}
+
+.form-actions a.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+/* Messages d'erreur */
+.alert {
+    border-radius: var(--border-radius);
+    border: none;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert-danger {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.alert-danger h4 {
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+
+.alert-danger ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.alert-danger li {
+    margin-bottom: 6px;
+    line-height: 1.5;
+}
+
+/* Textarea */
+textarea.form-control {
+    resize: vertical;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100px;
+}
+
+/* Validation Bootstrap */
+.was-validated .form-control:invalid,
+.was-validated .form-select:invalid {
+    border-color: var(--danger-color);
+    background-image: none;
+}
+
+.was-validated .form-control:invalid:focus,
+.was-validated .form-select:invalid:focus {
+    border-color: var(--danger-color);
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.was-validated .form-control:valid,
+.was-validated .form-select:valid {
+    border-color: #dee2e6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .besoin-form-body {
+        padding: 25px;
+    }
+
+    .besoin-form-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .article-item .row {
+        flex-direction: column;
+    }
+
+    .article-item .col-md-5,
+    .article-item .col-md-2,
+    .article-item .col-md-3,
+    .article-item .col-md-2 {
+        width: 100%;
+    }
+
+    .article-item .col-md-2 {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-actions .btn {
+        width: 100%;
+    }
+}
+
+/* Animation de suppression */
+.article-item.removing {
+    animation: slideOut 0.3s ease-out;
+}
+
+@keyframes slideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+}
+
+/* Compteur d'articles */
+.articles-counter {
+    display: inline-block;
+    background: var(--primary-color);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-left: 10px;
+}
+
+/* Info box */
+.info-box {
+    background: #e7f3ff;
+    border-left: 4px solid var(--primary-color);
+    padding: 15px;
+    border-radius: var(--border-radius);
+    margin-bottom: 20px;
+    color: #004085;
+    font-size: 0.9rem;
+}
+
+.info-box strong {
+    color: var(--primary-color);
+}
