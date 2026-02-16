@@ -93,7 +93,7 @@ if ($dbHost === 'localhost') {
 		// Force TCP to localhost if socket not found (avoids PDO trying wrong socket)
 		$dsn = 'mysql:host=127.0.0.1;dbname=' . $dbName . ';charset=utf8mb4';
 	}
-} else {
+} else {      
 	$dsn = 'mysql:host=' . $dbHost . ';dbname=' . $dbName . ';charset=utf8mb4';
 }
 
