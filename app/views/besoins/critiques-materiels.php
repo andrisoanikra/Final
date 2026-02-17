@@ -274,5 +274,6 @@ $pageTitle = 'Besoins critiques (Matériel/Nature) - BNGRC';
         </div>
     <?php endif; ?>
 </div>
+<?php include __DIR__ . '/../assets/inc/footer.php'; ?>
 
 <?php include __DIR__ . '/../assets/inc/footer.php'; ?>

@@ -64,6 +64,7 @@
         </div>
     </div>
 </div>
+<?php include __DIR__ . '/../assets/inc/footer.php'; ?>
 
 <script nonce="<?php echo Flight::get('csp_nonce'); ?>">
     // Attendre que le DOM soit complètement chargé
