@@ -19,7 +19,7 @@ $pageTitle = 'Détails du besoin - BNGRC';
             </svg>
             Détails du besoin #<?php echo $besoin['id_besoin']; ?>
         </h1>
-        <a href="/besoins" class="btn btn-secondary">
+        <a href="<?= $base_url ?>/besoins" class="btn btn-secondary">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="19" y1="12" x2="5" y2="12"></line>
                 <polyline points="12 19 5 12 12 5"></polyline>
@@ -253,7 +253,7 @@ $pageTitle = 'Détails du besoin - BNGRC';
             <div class="item-card">
                 <h3>Actions</h3>
                 <div class="card-body">
-                    <form method="POST" action="/besoin/<?php echo $besoin['id_besoin']; ?>/statut" class="mb-3">
+                    <form method="POST" action="<?= $base_url ?>/besoin/<?php echo $besoin['id_besoin']; ?>/statut" class="mb-3">
                         <div class="form-group mb-3">
                             <label for="statut" class="form-label">Mettre à jour le statut</label>
                             <select class="form-control" id="statut" name="statut">
@@ -270,7 +270,7 @@ $pageTitle = 'Détails du besoin - BNGRC';
                         </button>
                     </form>
 
-                    <a href="/besoin/<?php echo $besoin['id_besoin']; ?>/delete" class="btn btn-danger w-100" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce besoin ?');">
+                    <a href="<?= $base_url ?>/besoin/<?php echo $besoin['id_besoin']; ?>/delete" class="btn btn-danger w-100" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce besoin ?');">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polyline points="3 6 5 6 21 6"></polyline>
                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -279,14 +279,14 @@ $pageTitle = 'Détails du besoin - BNGRC';
                     </a>
 
                     <div class="mt-3">
-                        <a href="/ville/<?php echo $besoin['id_ville']; ?>" class="btn btn-secondary w-100 mb-2">
+                        <a href="<?= $base_url ?>/ville/<?php echo $besoin['id_ville']; ?>" class="btn btn-secondary w-100 mb-2">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <line x1="19" y1="12" x2="5" y2="12"></line>
                                 <polyline points="12 19 5 12 12 5"></polyline>
                             </svg>
                             Retour à la ville
                         </a>
-                        <a href="/besoins" class="btn btn-secondary w-100">
+                        <a href="<?= $base_url ?>/besoins" class="btn btn-secondary w-100">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                             </svg>

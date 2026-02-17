@@ -18,7 +18,7 @@ $pageTitle = 'Besoins critiques (Matériel/Nature) - BNGRC';
             </svg>
             Besoins critiques - Matériel & Nature
         </h1>
-        <a href="/besoins" class="btn btn-secondary">
+        <a href="<?= $base_url ?>/besoins" class="btn btn-secondary">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="19" y1="12" x2="5" y2="12"></line>
                 <polyline points="12 19 5 12 12 5"></polyline>
@@ -198,7 +198,7 @@ $pageTitle = 'Besoins critiques (Matériel/Nature) - BNGRC';
                     </div>
 
                     <div class="card-actions">
-                        <a href="/besoin/<?php echo $besoin['id_besoin']; ?>" class="btn btn-secondary btn-sm">
+                        <a href="<?= $base_url ?>/besoin/<?php echo $besoin['id_besoin']; ?>" class="btn btn-secondary btn-sm">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="12" cy="12" r="10"></circle>
                                 <line x1="12" y1="16" x2="12" y2="12"></line>
@@ -206,7 +206,7 @@ $pageTitle = 'Besoins critiques (Matériel/Nature) - BNGRC';
                             </svg>
                             Voir détails
                         </a>
-                        <a href="/achat/formulaire/<?php echo $besoin['id_besoin']; ?>" class="btn btn-success btn-sm">
+                        <a href="<?= $base_url ?>/achat/formulaire/<?php echo $besoin['id_besoin']; ?>" class="btn btn-success btn-sm">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="9" cy="21" r="1"></circle>
                                 <circle cx="20" cy="21" r="1"></circle>

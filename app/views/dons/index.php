@@ -16,7 +16,7 @@ $pageTitle = 'Liste des dons - BNGRC';
             </svg>
             Liste des dons
         </h1>
-        <a href="/don/create" class="btn btn-primary">
+        <a href="<?= $base_url ?>/don/create" class="btn btn-primary">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -93,7 +93,7 @@ $pageTitle = 'Liste des dons - BNGRC';
                     </svg>
                     <h3>Aucun don enregistré</h3>
                     <p>Commencez par ajouter des dons pour aider les sinistrés.</p>
-                    <a href="/don/create" class="btn btn-primary">Créer un don</a>
+                    <a href="<?= $base_url ?>/don/create" class="btn btn-primary">Créer un don</a>
                 </div>
             <?php else: ?>
                 <!-- Statistiques -->
@@ -278,7 +278,7 @@ $pageTitle = 'Liste des dons - BNGRC';
                             </div>
 
                             <div class="card-actions">
-                                <a href="/don/<?php echo $don['id_don']; ?>" class="btn btn-secondary btn-sm">
+                                <a href="<?= $base_url ?>/don/<?php echo $don['id_don']; ?>" class="btn btn-secondary btn-sm">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                         <circle cx="12" cy="12" r="3"></circle>
@@ -286,7 +286,7 @@ $pageTitle = 'Liste des dons - BNGRC';
                                     Voir
                                 </a>
                                 <?php if ($don['statut'] == 'disponible'): ?>
-                                    <a href="/don/<?php echo $don['id_don']; ?>/valider" class="btn btn-success btn-sm" 
+                                    <a href="<?= $base_url ?>/don/<?php echo $don['id_don']; ?>/valider" class="btn btn-success btn-sm" 
                                        onclick="return confirm('Valider ce don et l\'affecter aux besoins ?');">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                             <polyline points="20 6 9 17 4 12"></polyline>
@@ -294,7 +294,7 @@ $pageTitle = 'Liste des dons - BNGRC';
                                         Valider
                                     </a>
                                 <?php endif; ?>
-                                <a href="/don/<?php echo $don['id_don']; ?>/delete" class="btn btn-danger btn-sm" 
+                                <a href="<?= $base_url ?>/don/<?php echo $don['id_don']; ?>/delete" class="btn btn-danger btn-sm" 
                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce don ?');">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <polyline points="3 6 5 6 21 6"></polyline>

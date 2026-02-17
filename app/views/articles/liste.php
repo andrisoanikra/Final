@@ -16,7 +16,7 @@ $pageTitle = 'Liste des articles - BNGRC';
             </svg>
             Liste des articles
         </h1>
-        <a href="/articles/create" class="btn btn-primary">
+        <a href="<?= $base_url ?>/articles/create" class="btn btn-primary">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -71,7 +71,7 @@ $pageTitle = 'Liste des articles - BNGRC';
             </svg>
             <h3 class="empty-state-title">Aucun article enregistré</h3>
             <p class="empty-state-text">Commencez par créer votre premier article</p>
-            <a href="/articles/create" class="btn btn-primary">
+            <a href="<?= $base_url ?>/articles/create" class="btn btn-primary">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -124,14 +124,14 @@ $pageTitle = 'Liste des articles - BNGRC';
                     </div>
                     
                     <div class="item-card-footer">
-                        <a href="/articles/modifier/<?= $a['id_article'] ?>" class="btn btn-sm btn-warning" style="flex: 1;">
+                        <a href="<?= $base_url ?>/articles/modifier/<?= $a['id_article'] ?>" class="btn btn-sm btn-warning" style="flex: 1;">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                             </svg>
                             Modifier
                         </a>
-                        <a href="/articles/supprimer/<?= $a['id_article'] ?>" class="btn btn-sm btn-danger" 
+                        <a href="<?= $base_url ?>/articles/supprimer/<?= $a['id_article'] ?>" class="btn btn-sm btn-danger" 
                            onclick="return confirm('Voulez-vous vraiment supprimer cet article ?')">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="3 6 5 6 21 6"></polyline>

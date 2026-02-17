@@ -16,7 +16,7 @@ $pageTitle = 'Villes satisfaites - BNGRC';
             </svg>
             Villes avec besoins satisfaits
         </h1>
-        <a href="/besoins" class="btn btn-secondary">
+        <a href="<?= $base_url ?>/besoins" class="btn btn-secondary">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="19" y1="12" x2="5" y2="12"></line>
                 <polyline points="12 19 5 12 12 5"></polyline>
@@ -107,7 +107,7 @@ $pageTitle = 'Villes satisfaites - BNGRC';
                     </div>
 
                     <div class="card-actions">
-                        <a href="/ville/<?php echo $ville['id_ville']; ?>" class="btn btn-secondary btn-sm">
+                        <a href="<?= $base_url ?>/ville/<?php echo $ville['id_ville']; ?>" class="btn btn-secondary btn-sm">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="12" cy="12" r="10"></circle>
                                 <line x1="12" y1="16" x2="12" y2="12"></line>

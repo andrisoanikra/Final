@@ -17,7 +17,7 @@ $pageTitle = 'Liste des villes - BNGRC';
             </svg>
             Liste des villes
         </h1>
-        <a href="/ville/create" class="btn btn-primary">
+        <a href="<?= $base_url ?>/ville/create" class="btn btn-primary">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -50,7 +50,7 @@ $pageTitle = 'Liste des villes - BNGRC';
             </svg>
             <h3 class="empty-state-title">Aucune ville enregistrée</h3>
             <p class="empty-state-text">Commencez par créer votre première ville</p>
-            <a href="/ville/create" class="btn btn-primary">
+            <a href="<?= $base_url ?>/ville/create" class="btn btn-primary">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -120,14 +120,14 @@ $pageTitle = 'Liste des villes - BNGRC';
                         </div>
                     </div>
                     <div class="list-item-actions">
-                        <a href="/ville/<?php echo $ville['id_ville']; ?>" class="btn btn-sm btn-primary">
+                        <a href="<?= $base_url ?>/ville/<?php echo $ville['id_ville']; ?>" class="btn btn-sm btn-primary">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                 <circle cx="12" cy="12" r="3"></circle>
                             </svg>
                             Voir
                         </a>
-                        <a href="/ville/<?php echo $ville['id_ville']; ?>/delete" class="btn btn-sm btn-danger"
+                        <a href="<?= $base_url ?>/ville/<?php echo $ville['id_ville']; ?>/delete" class="btn btn-sm btn-danger"
                            onclick="return confirm('Voulez-vous vraiment supprimer cette ville ?');">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="3 6 5 6 21 6"></polyline>
@@ -167,7 +167,7 @@ $pageTitle = 'Liste des villes - BNGRC';
                         </div>
                     </div>
                     <div class="list-item-actions">
-                        <a href="/ville/<?php echo $ville['id_ville']; ?>" class="btn btn-sm btn-success">
+                        <a href="<?= $base_url ?>/ville/<?php echo $ville['id_ville']; ?>" class="btn btn-sm btn-success">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                 <circle cx="12" cy="12" r="3"></circle>

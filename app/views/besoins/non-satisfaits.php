@@ -18,7 +18,7 @@ $pageTitle = 'Besoins non satisfaits - BNGRC';
             </svg>
             Besoins non satisfaits
         </h1>
-        <a href="/besoin/create" class="btn btn-primary">
+        <a href="<?= $base_url ?>/besoin/create" class="btn btn-primary">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -215,14 +215,14 @@ $pageTitle = 'Besoins non satisfaits - BNGRC';
                             </div>
 
                             <div class="card-actions">
-                                <a href="/besoin/<?php echo $besoin['id_besoin']; ?>" class="btn btn-secondary btn-sm">
+                                <a href="<?= $base_url ?>/besoin/<?php echo $besoin['id_besoin']; ?>" class="btn btn-secondary btn-sm">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                         <circle cx="12" cy="12" r="3"></circle>
                                     </svg>
                                     Voir détails
                                 </a>
-                                <a href="/besoin/<?php echo $besoin['id_besoin']; ?>/delete" class="btn btn-danger btn-sm" 
+                                <a href="<?= $base_url ?>/besoin/<?php echo $besoin['id_besoin']; ?>/delete" class="btn btn-danger btn-sm" 
                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce besoin ?');">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <polyline points="3 6 5 6 21 6"></polyline>

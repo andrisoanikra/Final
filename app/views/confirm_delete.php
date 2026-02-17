@@ -27,7 +27,7 @@
                     <?php endif; ?>
                 </div>
                 <div class="card-footer">
-                    <form method="POST" action="/<?php echo $entity; ?>/<?php echo $id; ?>/delete" style="display: inline;">
+                    <form method="POST" action="<?= $base_url ?>/<?php echo $entity; ?>/<?php echo $id; ?>/delete" style="display: inline;">
                         <button type="submit" class="btn btn-danger">
                             <i class="fas fa-trash"></i> Oui, supprimer
                         </button>

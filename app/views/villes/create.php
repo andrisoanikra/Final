@@ -8,7 +8,7 @@ $pageTitle = 'Ajouter une ville - BNGRC';
 <?php include __DIR__ . '/../assets/inc/header.php'; ?>
 <?php include __DIR__ . '/../assets/inc/navbar.php'; ?>
 
-<link rel="stylesheet" href="/assets/css/besoins-form.css">
+<link rel="stylesheet" href="<?= $base_url ?>/assets/css/besoins-form.css">
 
 <div class="besoin-form-container">
     <div class="container">
@@ -33,7 +33,7 @@ $pageTitle = 'Ajouter une ville - BNGRC';
                             </div>
                         <?php endif; ?>
 
-                        <form method="POST" action="/ville/create" class="needs-validation">
+                        <form method="POST" action="<?= $base_url ?>/ville/create" class="needs-validation">
                             <div class="form-group mb-3">
                                 <label for="id_region" class="form-label">
                                     📍 Région <span class="text-danger">*</span>
@@ -72,7 +72,7 @@ $pageTitle = 'Ajouter une ville - BNGRC';
                                     </svg>
                                     Ajouter la ville
                                 </button>
-                                <a href="/villes" class="btn btn-secondary">
+                                <a href="<?= $base_url ?>/villes" class="btn btn-secondary">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <line x1="18" y1="6" x2="6" y2="18"></line>
                                         <line x1="6" y1="6" x2="18" y2="18"></line>

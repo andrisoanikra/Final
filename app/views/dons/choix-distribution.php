@@ -18,7 +18,7 @@ $pageTitle = 'Choisir la méthode de distribution - BNGRC';
             </svg>
             Choisir la méthode de distribution
         </h1>
-        <a href="/dons" class="btn btn-secondary">
+        <a href="<?= $base_url ?>/dons" class="btn btn-secondary">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="19" y1="12" x2="5" y2="12"></line>
                 <polyline points="12 19 5 12 12 5"></polyline>
@@ -84,7 +84,7 @@ $pageTitle = 'Choisir la méthode de distribution - BNGRC';
                         </ul>
                     </div>
 
-                    <form method="POST" action="/don/<?php echo $don['id_don']; ?>/valider/dispatcher">
+                    <form method="POST" action="<?= $base_url ?>/don/<?php echo $don['id_don']; ?>/valider/dispatcher">
                         <button type="submit" class="btn btn-primary btn-lg w-100" 
                                 onclick="return confirm('Confirmer la distribution par la méthode Dispatcher ?')">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -120,7 +120,7 @@ $pageTitle = 'Choisir la méthode de distribution - BNGRC';
                         </ul>
                     </div>
 
-                    <form method="POST" action="/don/<?php echo $don['id_don']; ?>/valider/plus-petit">
+                    <form method="POST" action="<?= $base_url ?>/don/<?php echo $don['id_don']; ?>/valider/plus-petit">
                         <button type="submit" class="btn btn-success btn-lg w-100"
                                 onclick="return confirm('Confirmer la distribution par plus petit montant ?')">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -157,7 +157,7 @@ $pageTitle = 'Choisir la méthode de distribution - BNGRC';
                         </ul>
                     </div>
 
-                    <form method="POST" action="/don/<?php echo $don['id_don']; ?>/valider/proportionnel">
+                    <form method="POST" action="<?= $base_url ?>/don/<?php echo $don['id_don']; ?>/valider/proportionnel">
                         <button type="submit" class="btn btn-warning btn-lg w-100"
                                 onclick="return confirm('Confirmer la distribution proportionnelle ?')">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

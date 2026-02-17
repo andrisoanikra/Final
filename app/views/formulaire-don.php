@@ -8,7 +8,7 @@ $pageTitle = 'Ajouter un don - BNGRC';
 <?php include __DIR__ . '/assets/inc/header.php'; ?>
 <?php include __DIR__ . '/assets/inc/navbar.php'; ?>
 
-<link rel="stylesheet" href="/assets/css/besoins-form.css">
+<link rel="stylesheet" href="<?= $base_url ?>/assets/css/besoins-form.css">
 
 <div class="besoin-form-container">
     <div class="container">
@@ -37,7 +37,7 @@ $pageTitle = 'Ajouter un don - BNGRC';
                             <strong>💡 Information :</strong> Votre don aidera les communautés en difficulté. Merci pour votre générosité !
                         </div>
 
-                        <form action="/don/create" method="POST" class="needs-validation" novalidate>
+                        <form action="<?= $base_url ?>/don/create" method="POST" class="needs-validation" novalidate>
                             <!-- Informations du donateur (en haut) -->
                             <div class="card" style="background: var(--gray-50); border: 2px solid var(--accent-blue); margin-bottom: 2rem;">
                                 <div class="card-body">
@@ -96,7 +96,7 @@ $pageTitle = 'Ajouter un don - BNGRC';
                             <!-- Boutons d'action -->
                             <div class="form-actions">
                                 <button type="submit" class="btn btn-primary">✅ Enregistrer tous les dons</button>
-                                <a href="/dons" class="btn btn-secondary">❌ Annuler</a>
+                                <a href="<?= $base_url ?>/dons" class="btn btn-secondary">❌ Annuler</a>
                             </div>
                         </form>
                     </div>

@@ -15,7 +15,7 @@ $pageTitle = 'Formulaire d\'achat - BNGRC';
             </svg>
             Acheter des articles pour le besoin
         </h1>
-        <a href="/besoins/critiques-materiels" class="btn btn-secondary">
+        <a href="<?= $base_url ?>/besoins/critiques-materiels" class="btn btn-secondary">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="19" y1="12" x2="5" y2="12"></line>
                 <polyline points="12 19 5 12 12 5"></polyline>
@@ -64,7 +64,7 @@ $pageTitle = 'Formulaire d\'achat - BNGRC';
         <div class="alert alert-warning">
             <strong>⚠️ Aucun don en argent disponible</strong><br>
             Il n'y a actuellement aucun don en argent disponible pour effectuer des achats.
-            <a href="/don/create" class="btn btn-primary btn-sm mt-2">Ajouter un don</a>
+            <a href="<?= $base_url ?>/don/create" class="btn btn-primary btn-sm mt-2">Ajouter un don</a>
         </div>
     <?php else: ?>
         <!-- Formulaire d'achat automatique -->
@@ -81,7 +81,7 @@ $pageTitle = 'Formulaire d\'achat - BNGRC';
                     </ul>
                 </div>
 
-                <form method="POST" action="/achat/create" id="achat-form">
+                <form method="POST" action="<?= $base_url ?>/achat/create" id="achat-form">
                     <input type="hidden" name="id_besoin" value="<?php echo $besoin['id_besoin']; ?>">
 
                     <!-- Sélection du don en argent -->
@@ -129,7 +129,7 @@ $pageTitle = 'Formulaire d\'achat - BNGRC';
                         <button type="submit" class="btn btn-primary" id="btn-submit" disabled>
                             ✅ Convertir ce don automatiquement
                         </button>
-                        <a href="/besoins/critiques-materiels" class="btn btn-secondary">Annuler</a>
+                        <a href="<?= $base_url ?>/besoins/critiques-materiels" class="btn btn-secondary">Annuler</a>
                     </div>
                 </form>
             </div>

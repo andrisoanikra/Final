@@ -13,7 +13,7 @@ $pageTitle = 'Distribution Automatique - BNGRC';
             </svg>
             Distribution Automatique des Dons
         </h1>
-        <a href="/tableau-bord" class="btn btn-secondary">
+        <a href="<?= $base_url ?>/tableau-bord" class="btn btn-secondary">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="19" y1="12" x2="5" y2="12"></line>
                 <polyline points="12 19 5 12 12 5"></polyline>
@@ -113,7 +113,7 @@ $pageTitle = 'Distribution Automatique - BNGRC';
                 en commençant par les plus petits montants.
             </p>
             
-            <form method="POST" action="/distribution/executer" id="form-distribution">
+            <form method="POST" action="<?= $base_url ?>/distribution/executer" id="form-distribution">
                 <button type="submit" class="btn btn-success btn-lg" style="padding: 15px 40px; font-size: 18px;">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 10px;">
                         <polyline points="20 6 9 17 4 12"></polyline>
@@ -132,12 +132,12 @@ $pageTitle = 'Distribution Automatique - BNGRC';
     <div class="mt-4">
         <div class="row">
             <div class="col-md-6">
-                <a href="/besoins" class="btn btn-outline-primary btn-block" style="width: 100%; padding: 15px;">
+                <a href="<?= $base_url ?>/besoins" class="btn btn-outline-primary btn-block" style="width: 100%; padding: 15px;">
                     📋 Voir tous les besoins
                 </a>
             </div>
             <div class="col-md-6">
-                <a href="/dons" class="btn btn-outline-info btn-block" style="width: 100%; padding: 15px;">
+                <a href="<?= $base_url ?>/dons" class="btn btn-outline-info btn-block" style="width: 100%; padding: 15px;">
                     🎁 Voir tous les dons
                 </a>
             </div>
@@ -146,9 +146,10 @@ $pageTitle = 'Distribution Automatique - BNGRC';
 </div>
 
 <script nonce="<?php echo Flight::get('csp_nonce'); ?>">
+const baseUrl = '<?= $base_url ?>';
 document.addEventListener('DOMContentLoaded', function() {
     // Charger les statistiques
-    fetch('/api/recapitulatif')
+    fetch(baseUrl + '/api/recapitulatif')
         .then(response => response.json())
         .then(data => {
             document.getElementById('nb-besoins').textContent = data.besoins_en_cours || 0;

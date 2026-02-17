@@ -75,7 +75,7 @@ $pageTitle = 'Réinitialiser les données - BNGRC';
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center mt-4">
-                        <a href="/tableau-bord" class="btn btn-secondary">
+                        <a href="<?= $base_url ?>/tableau-bord" class="btn btn-secondary">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <line x1="19" y1="12" x2="5" y2="12"></line>
                                 <polyline points="12 19 5 12 12 5"></polyline>
@@ -83,7 +83,7 @@ $pageTitle = 'Réinitialiser les données - BNGRC';
                             Annuler
                         </a>
                         
-                        <form method="POST" action="/reset/execute" onsubmit="return confirm('⚠️ ÊTES-VOUS ABSOLUMENT SÛR(E) ?\n\nToutes les données actuelles seront perdues!\n\nCette action est IRRÉVERSIBLE.');">
+                        <form method="POST" action="<?= $base_url ?>/reset/execute" onsubmit="return confirm('⚠️ ÊTES-VOUS ABSOLUMENT SÜR(E) ?\n\nToutes les données actuelles seront perdues!\n\nCette action est IRRÉVERSIBLE.');">
                             <button type="submit" class="btn btn-danger btn-lg">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <polyline points="1 4 1 10 7 10"></polyline>

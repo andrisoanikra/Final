@@ -1,3 +1,4 @@
+<?php $base_url = Flight::get('flight.base_url'); ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -9,7 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- Thème personnalisé -->
-    <link rel="stylesheet" href="/assets/css/theme.css">
+    <link rel="stylesheet" href="<?= $base_url ?>/assets/css/theme.css">
     
     <!-- Font Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

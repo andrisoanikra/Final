@@ -6,7 +6,7 @@
 
 <?php include __DIR__ . '/../assets/inc/navbar.php'; ?>
 
-<link rel="stylesheet" href="/assets/css/besoins-form.css">
+<link rel="stylesheet" href="<?= $base_url ?>/assets/css/besoins-form.css">
 
 <div class="besoin-form-container">
     <div class="container">
@@ -35,7 +35,7 @@
                             <strong>💡 Conseil :</strong> Vous pouvez ajouter plusieurs besoins pour différentes villes. Chaque besoin peut contenir plusieurs articles.
                         </div>
 
-                        <form method="POST" action="/besoin/create" class="needs-validation" novalidate>
+                        <form method="POST" action="<?= $base_url ?>/besoin/create" class="needs-validation" novalidate>
                             <!-- Container pour les besoins multiples -->
                             <div id="besoins-container">
                                 <!-- Les besoins seront ajoutés par JavaScript -->
@@ -55,7 +55,7 @@
                             <!-- Boutons d'action -->
                             <div class="form-actions">
                                 <button type="submit" class="btn btn-primary">✅ Enregistrer tous les besoins</button>
-                                <a href="/besoins" class="btn btn-secondary">❌ Annuler</a>
+                                <a href="<?= $base_url ?>/besoins" class="btn btn-secondary">❌ Annuler</a>
                             </div>
                         </form>
                     </div>

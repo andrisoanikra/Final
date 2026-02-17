@@ -19,7 +19,7 @@ $pageTitle = htmlspecialchars($ville['nom_ville']) . ' - BNGRC';
             </h1>
             <p class="page-subtitle"><?php echo htmlspecialchars($ville['nom_region']); ?></p>
         </div>
-        <a href="/besoin/create?ville_id=<?php echo $ville['id_ville']; ?>" class="btn btn-primary">
+        <a href="<?= $base_url ?>/besoin/create?ville_id=<?php echo $ville['id_ville']; ?>" class="btn btn-primary">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -64,7 +64,7 @@ $pageTitle = htmlspecialchars($ville['nom_ville']) . ' - BNGRC';
                     </svg>
                     <h3>Aucun besoin pour cette ville</h3>
                     <p>Commencez par ajouter des besoins pour suivre les demandes des sinistrés.</p>
-                    <a href="/besoin/create?ville_id=<?php echo $ville['id_ville']; ?>" class="btn btn-primary">Créer un besoin</a>
+                    <a href="<?= $base_url ?>/besoin/create?ville_id=<?php echo $ville['id_ville']; ?>" class="btn btn-primary">Créer un besoin</a>
                 </div>
             <?php else: ?>
                 <div class="card-grid">
@@ -222,14 +222,14 @@ $pageTitle = htmlspecialchars($ville['nom_ville']) . ' - BNGRC';
                             </div>
 
                             <div class="card-actions">
-                                <a href="/besoin/<?php echo $besoin['id_besoin']; ?>" class="btn btn-secondary btn-sm">
+                                <a href="<?= $base_url ?>/besoin/<?php echo $besoin['id_besoin']; ?>" class="btn btn-secondary btn-sm">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                         <circle cx="12" cy="12" r="3"></circle>
                                     </svg>
                                     Voir détails
                                 </a>
-                                <a href="/besoin/<?php echo $besoin['id_besoin']; ?>/delete" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce besoin ?');">
+                                <a href="<?= $base_url ?>/besoin/<?php echo $besoin['id_besoin']; ?>/delete" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce besoin ?');">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <polyline points="3 6 5 6 21 6"></polyline>
                                         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -243,14 +243,14 @@ $pageTitle = htmlspecialchars($ville['nom_ville']) . ' - BNGRC';
             <?php endif; ?>
 
     <div class="mt-4">
-        <a href="/villes" class="btn btn-secondary">
+        <a href="<?= $base_url ?>/villes" class="btn btn-secondary">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="19" y1="12" x2="5" y2="12"></line>
                 <polyline points="12 19 5 12 12 5"></polyline>
             </svg>
             Retour
         </a>
-        <a href="/ville/<?php echo $ville['id_ville']; ?>/delete" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette ville ?');">
+        <a href="<?= $base_url ?>/ville/<?php echo $ville['id_ville']; ?>/delete" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette ville ?');">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="3 6 5 6 21 6"></polyline>
                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>

@@ -27,7 +27,7 @@ $pageTitle = 'Récapitulation des Besoins - BNGRC';
                 </svg>
                 Actualiser
             </button>
-            <a href="/tableau-bord" class="btn btn-secondary">
+            <a href="<?= $base_url ?>/tableau-bord" class="btn btn-secondary">
                 Retour au tableau de bord
             </a>
         </div>
@@ -244,6 +244,8 @@ $pageTitle = 'Récapitulation des Besoins - BNGRC';
 </div>
 
 <script nonce="<?php echo Flight::get('csp_nonce'); ?>">
+const baseUrl = '<?= $base_url ?>';
+
 /**
  * Fonction pour actualiser les données via Ajax
  */
@@ -257,7 +259,7 @@ function actualiserRecapitulatif() {
     loadingIndicator.style.display = 'block';
     
     // Appel Ajax
-    fetch('/api/recapitulatif')
+    fetch(baseUrl + '/api/recapitulatif')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Erreur réseau');

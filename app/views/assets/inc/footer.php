@@ -7,8 +7,9 @@
             <p class="mb-0" style="color: #6c757d;">
                 © 2026 BNGRC - Bureau National de Gestion des Risques et Catastrophes
             </p>
-            <p class="mb-0" style="color: #adb5bd; font-size: 0.9rem;">
-                Développé par <strong>ETU004369</strong>
+            <p class="mb-0" style="color: #000000; font-size: 2rem;">
+                Développé par <strong>ETU004369/ETU003119/ETU004374</strong>
+
             </p>
         </div>
     </footer>

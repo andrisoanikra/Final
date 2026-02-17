@@ -46,7 +46,7 @@ if (empty($app) === true) {
 $app->path(__DIR__ . $ds . '..' . $ds . '..');
 
 // Core config variables
-$app->set('flight.base_url', '/ETU004369/Final-1/public');           // Base URL for your app. Change if app is in a subdirectory (e.g., '/myapp/')
+$app->set('flight.base_url', '/ETU004369/BNGRC-FINAL/public');           // Base URL for your app. Change if app is in a subdirectory (e.g., '/myapp/')
 $app->set('flight.case_sensitive', false);    // Set true for case sensitive routes. Default: false
 $app->set('flight.log_errors', true);         // Log errors to file. Recommended: true in production
 $app->set('flight.handle_errors', true);     // Let Tracy handle errors if false. Set true to use Flight's error handler
@@ -68,9 +68,9 @@ return [
 	'database' => [
 		//MySQL Example:
 		'host'     => 'localhost',      // Database host (e.g., 'localhost', 'db.example.com')
-		'dbname'   => 'bngrc_dons',   // Database name (e.g., 'flightphp')
-		'user'     => 'root',  // Database user (e.g., 'root')
-		'password' => '',  // Database password (never commit real passwords)
+		'dbname'   => 'db_s2_ETU004369',   // Database name (e.g., 'flightphp')
+		'user'     => 'ETU004369',  // Database user (e.g., 'root')
+		'password' => '1FTTeygK',  // Database password (never commit real passwords)
 
 		// SQLite Example:
 		// 'file_path' => __DIR__ . $ds . '..' . $ds . 'database.sqlite', // Path to SQLite file

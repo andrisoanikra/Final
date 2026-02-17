@@ -21,7 +21,7 @@ $pageTitle = 'Simulation et validation des achats - BNGRC';
             <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#configModal">
                 ⚙️ Configurer frais
             </button>
-            <a href="/besoins/critiques-materiels" class="btn btn-secondary">
+            <a href="<?= $base_url ?>/besoins/critiques-materiels" class="btn btn-secondary">
                 Retour aux besoins
             </a>
         </div>
@@ -44,7 +44,7 @@ $pageTitle = 'Simulation et validation des achats - BNGRC';
     <!-- Filtres -->
     <div class="card mb-4">
         <div class="card-body">
-            <form method="GET" action="/achats/simulation" class="row align-items-end">
+            <form method="GET" action="<?= $base_url ?>/achats/simulation" class="row align-items-end">
                 <div class="col-md-4">
                     <label class="form-label">Filtrer par ville</label>
                     <select class="form-control form-select" name="ville">
@@ -73,7 +73,7 @@ $pageTitle = 'Simulation et validation des achats - BNGRC';
             </svg>
             <h3>Aucun achat enregistré</h3>
             <p>Créez un achat simulé depuis la page des besoins critiques.</p>
-            <a href="/besoins/critiques-materiels" class="btn btn-primary">Voir les besoins critiques</a>
+            <a href="<?= $base_url ?>/besoins/critiques-materiels" class="btn btn-primary">Voir les besoins critiques</a>
         </div>
     <?php else: ?>
         <?php
@@ -216,13 +216,13 @@ $pageTitle = 'Simulation et validation des achats - BNGRC';
 
                     <?php if ($achat['statut'] == 'simule'): ?>
                         <div class="card-actions">
-                            <form method="POST" action="/achat/valider/<?php echo $achat['id_achat']; ?>" style="display: inline;" 
+                            <form method="POST" action="<?= $base_url ?>/achat/valider/<?php echo $achat['id_achat']; ?>" style="display: inline;" 
                                   onsubmit="return confirm('Confirmer la validation de cet achat ? Un don sera créé et dispatché automatiquement.');">
                                 <button type="submit" class="btn btn-success btn-sm">
                                     ✓ Valider l'achat
                                 </button>
                             </form>
-                            <form method="POST" action="/achat/supprimer/<?php echo $achat['id_achat']; ?>" style="display: inline;"
+                            <form method="POST" action="<?= $base_url ?>/achat/supprimer/<?php echo $achat['id_achat']; ?>" style="display: inline;"
                                   onsubmit="return confirm('Supprimer cette simulation ?');">
                                 <button type="submit" class="btn btn-danger btn-sm">
                                     🗑️ Supprimer
@@ -244,7 +244,7 @@ $pageTitle = 'Simulation et validation des achats - BNGRC';
                 <h5 class="modal-title">⚙️ Configuration des frais d'achat</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST" action="/achats/config">
+            <form method="POST" action="<?= $base_url ?>/achats/config">
                 <div class="modal-body">
                     <div class="form-group">
                         <label class="form-label">Pourcentage de frais d'achat (%)</label>

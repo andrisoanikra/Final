@@ -1,7 +1,8 @@
+<?php $base_url = Flight::get('flight.base_url'); ?>
 <!-- Sidebar professionnelle -->
 <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
-        <a href="/" class="sidebar-brand">
+        <a href="<?= $base_url ?>/" class="sidebar-brand">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                 <polyline points="9 22 9 12 15 12 15 22"></polyline>
@@ -13,7 +14,7 @@
     <nav class="sidebar-nav">
         <!-- Tableau de bord -->
         <div class="nav-item">
-            <a class="nav-link" href="/tableau-bord">
+            <a class="nav-link" href="<?= $base_url ?></a>/tableau-bord">
                 <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="3" y="3" width="7" height="7"></rect>
                     <rect x="14" y="3" width="7" height="7"></rect>
@@ -26,7 +27,7 @@
 
         <!-- Récapitulation -->
         <div class="nav-item">
-            <a class="nav-link" href="/recapitulation">
+            <a class="nav-link" href="<?= $base_url ?>/recapitulation">
                 <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="18" y1="20" x2="18" y2="10"></line>
                     <line x1="12" y1="20" x2="12" y2="4"></line>
@@ -39,7 +40,7 @@
         <!-- Besoins avec sous-menu -->
         <div class="nav-item has-submenu">
             <div class="nav-link-wrapper">
-                <a class="nav-link" href="/besoins">
+                <a class="nav-link" href="<?= $base_url ?>/besoins">
                     <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                         <polyline points="14 2 14 8 20 8"></polyline>
@@ -56,10 +57,10 @@
                 </button>
             </div>
             <div class="submenu" id="besoins-submenu">
-                <a href="/besoins">Liste des besoins</a>
-                <a href="/besoin/create">Ajouter un besoin</a>
-                <a href="/besoins/non-satisfaits">Besoins non satisfaits</a>
-                <a href="/besoins/critiques-materiels">
+                <a href="<?= $base_url ?>/besoins">Liste des besoins</a>
+                <a href="<?= $base_url ?>/besoin/create">Ajouter un besoin</a>
+                <a href="<?= $base_url ?>/besoins/non-satisfaits">Besoins non satisfaits</a>
+                <a href="<?= $base_url ?>/besoins/critiques-materiels">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="display: inline; vertical-align: middle; margin-right: 5px;">
                         <circle cx="12" cy="12" r="10"></circle>
                         <line x1="12" y1="8" x2="12" y2="12"></line>
@@ -67,7 +68,7 @@
                     </svg>
                     Besoins critiques (Matériel/Nature)
                 </a>
-                <a href="/achats/simulation">
+                <a href="<?= $base_url ?>/achats/simulation">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle; margin-right: 5px;">
                         <circle cx="9" cy="21" r="1"></circle>
                         <circle cx="20" cy="21" r="1"></circle>
@@ -75,7 +76,7 @@
                     </svg>
                     Achats et simulation
                 </a>
-                <a href="/besoins/villes-satisfaites">
+                <a href="<?= $base_url ?>/besoins/villes-satisfaites">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle; margin-right: 5px;">
                         <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
@@ -87,7 +88,7 @@
         <!-- Articles avec sous-menu -->
         <div class="nav-item has-submenu">
             <div class="nav-link-wrapper">
-                <a class="nav-link" href="/articles">
+                <a class="nav-link" href="<?= $base_url ?>/articles">
                     <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
                         <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
@@ -102,15 +103,15 @@
                 </button>
             </div>
             <div class="submenu" id="articles-submenu">
-                <a href="/articles">Liste des articles</a>
-                <a href="/articles/create">Ajouter un article</a>
+                <a href="<?= $base_url ?>/articles">Liste des articles</a>
+                <a href="<?= $base_url ?>/articles/create">Ajouter un article</a>
             </div>
         </div>
 
         <!-- Dons avec sous-menu -->
         <div class="nav-item has-submenu">
             <div class="nav-link-wrapper">
-                <a class="nav-link" href="/dons">
+                <a class="nav-link" href="<?= $base_url ?>/dons">
                     <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                     </svg>
@@ -123,15 +124,15 @@
                 </button>
             </div>
             <div class="submenu" id="dons-submenu">
-                <a href="/dons">Liste des dons</a>
-                <a href="/don/create">Ajouter un don</a>
+                <a href="<?= $base_url ?>/dons">Liste des dons</a>
+                <a href="<?= $base_url ?>/don/create">Ajouter un don</a>
             </div>
         </div>
 
         <!-- Villes avec sous-menu -->
         <div class="nav-item has-submenu">
             <div class="nav-link-wrapper">
-                <a class="nav-link" href="/villes">
+                <a class="nav-link" href="<?= $base_url ?>/villes">
                     <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                         <circle cx="12" cy="10" r="3"></circle>
@@ -145,8 +146,8 @@
                 </button>
             </div>
             <div class="submenu" id="villes-submenu">
-                <a href="/villes">Liste des villes</a>
-                <a href="/ville/create">Ajouter une ville</a>
+                <a href="<?= $base_url ?>/villes">Liste des villes</a>
+                <a href="<?= $base_url ?>/ville/create">Ajouter une ville</a>
             </div>
         </div>
 
@@ -155,7 +156,7 @@
 
         <!-- Réinitialisation -->
         <div class="nav-item">
-            <a class="nav-link" href="/reset" style="color: #f59e0b;">
+            <a class="nav-link" href="<?= $base_url ?>/reset" style="color: #f59e0b;">
                 <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="1 4 1 10 7 10"></polyline>
                     <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
