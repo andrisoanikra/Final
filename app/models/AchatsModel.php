@@ -184,22 +184,41 @@ class AchatsModel
     }
 
     /**
-     * Récupère les dons en argent disponibles
+     * Récupère les dons en argent disponibles (avec montant restant > 0)
      */
     public function getDonsArgentDisponibles()
     {
         $tmt = $this->db->runQuery("
             SELECT d.*, 
-                   (d.montant_argent - COALESCE(
-                       (SELECT SUM(montant_total) FROM achats WHERE id_don_argent = d.id_don AND statut = 'simule'), 0
-                   )) as montant_disponible
+                   d.montant_restant as montant_disponible
             FROM dons d
             WHERE d.id_type_don = 3 
-            AND d.statut IN ('disponible', 'affecte')
-            AND d.montant_argent > 0
-            HAVING montant_disponible > 0
+            AND d.statut IN ('disponible', 'partiel')
+            AND d.montant_restant > 0
             ORDER BY d.date_don DESC
         ");
         return $tmt->fetchAll();
+    }
+
+    /**
+     * Crée un achat automatique utilisant TOUT le montant disponible du don
+     * Le système répartit intelligemment l'argent sur les articles du besoin
+     */
+    public function createAchatAutomatique($id_don_argent, $id_besoin, $montant_disponible, $frais_pourcentage)
+    {
+        // Le montant total consommé = montant_disponible
+        // Montant net pour acheter = montant_disponible / (1 + frais%)
+        $montant_net = $montant_disponible / (1 + ($frais_pourcentage / 100));
+        $montant_frais = $montant_disponible - $montant_net;
+
+        // Créer l'achat automatique (id_article = NULL car c'est une conversion automatique)
+        $tmt = $this->db->runQuery("
+            INSERT INTO achats (id_don_argent, id_besoin, id_article, quantite, prix_unitaire, 
+                               montant_article, frais_pourcentage, montant_frais, montant_total, statut)
+            VALUES (?, ?, NULL, 1, ?, ?, ?, ?, ?, 'simule')
+        ", [$id_don_argent, $id_besoin, $montant_net, $montant_net, 
+            $frais_pourcentage, $montant_frais, $montant_disponible]);
+        
+        return $this->db->lastInsertId();
     }
 }

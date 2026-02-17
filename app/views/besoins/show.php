@@ -17,8 +17,15 @@ $pageTitle = 'Détails du besoin - BNGRC';
                 <line x1="16" y1="13" x2="8" y2="13"></line>
                 <line x1="16" y1="17" x2="8" y2="17"></line>
             </svg>
-            <?php echo htmlspecialchars($besoin['nom_article']); ?>
+            Détails du besoin #<?php echo $besoin['id_besoin']; ?>
         </h1>
+        <a href="/besoins" class="btn btn-secondary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Retour
+        </a>
     </div>
 
     <div class="row">
@@ -27,7 +34,16 @@ $pageTitle = 'Détails du besoin - BNGRC';
                 <div class="card-header-flex">
                     <h3>Informations du besoin</h3>
                     <div>
-                        <span class="badge badge-secondary"><?php echo htmlspecialchars($besoin['libelle_type'] ?? ''); ?></span>
+                        <?php
+                        $badgeClass = match($besoin['urgence'] ?? 'normale') {
+                            'critique' => 'badge-danger',
+                            'urgente' => 'badge-warning',
+                            default => 'badge-secondary'
+                        };
+                        ?>
+                        <span class="badge <?php echo $badgeClass; ?>">
+                            <?php echo htmlspecialchars(ucfirst($besoin['urgence'] ?? 'normale')); ?>
+                        </span>
                     </div>
                 </div>
 
@@ -40,36 +56,87 @@ $pageTitle = 'Détails du besoin - BNGRC';
                         <span class="info-value font-bold"><?php echo htmlspecialchars($besoin['nom_ville']); ?></span>
                     </div>
 
+                    <?php if (!empty($besoin['description'])): ?>
                     <div class="info-row">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 11l3 3L22 4"></path>
-                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
                         </svg>
-                        <span class="info-label">Quantité:</span>
-                        <span class="info-value"><?php echo number_format($besoin['quantite'], 2, ',', ' '); ?></span>
+                        <span class="info-label">Description:</span>
+                        <span class="info-value"><?php echo htmlspecialchars($besoin['description']); ?></span>
                     </div>
+                    <?php endif; ?>
 
-                    <div class="info-row">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="12" y1="1" x2="12" y2="23"></line>
-                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                        </svg>
-                        <span class="info-label">Prix unitaire:</span>
-                        <span class="info-value"><?php echo number_format($besoin['prix_unitaire'], 0, ',', ' '); ?> Ar</span>
+                    <!-- Liste des articles du besoin -->
+                    <?php if (!empty($besoin['articles'])): ?>
+                    <div class="mt-4">
+                        <h5 class="mb-3">Articles demandés :</h5>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Article</th>
+                                        <th>Type</th>
+                                        <th class="text-end">Quantité</th>
+                                        <th class="text-end">Prix unitaire</th>
+                                        <th class="text-end">Satisfait</th>
+                                        <th class="text-end">Montant</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($besoin['articles'] as $article): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($article['nom_article']); ?></td>
+                                        <td><span class="badge badge-info"><?php echo htmlspecialchars($article['libelle_type'] ?? 'N/A'); ?></span></td>
+                                        <td class="text-end"><?php echo number_format($article['quantite'], 2, ',', ' '); ?></td>
+                                        <td class="text-end"><?php echo number_format($article['prix_unitaire'], 0, ',', ' '); ?> Ar</td>
+                                        <td class="text-end">
+                                            <span class="text-success">
+                                                <?php echo number_format($article['quantite_satisfaite'], 2, ',', ' '); ?>
+                                            </span>
+                                        </td>
+                                        <td class="text-end font-bold">
+                                            <?php echo number_format($article['quantite'] * $article['prix_unitaire'], 0, ',', ' '); ?> Ar
+                                        </td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
+                    <?php endif; ?>
 
-                    <div class="info-row">
+                    <div class="info-row mt-3">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="3" y="3" width="7" height="7"></rect>
                             <rect x="14" y="3" width="7" height="7"></rect>
                             <rect x="14" y="14" width="7" height="7"></rect>
                             <rect x="3" y="14" width="7" height="7"></rect>
                         </svg>
-                        <span class="info-label">Montant total:</span>
-                        <span class="info-value font-bold"><?php echo number_format($besoin['quantite'] * $besoin['prix_unitaire'], 0, ',', ' '); ?> Ar</span>
+                        <span class="info-label">Montant total besoin:</span>
+                        <span class="info-value font-bold"><?php echo number_format($besoin['montant_total'], 0, ',', ' '); ?> Ar</span>
                     </div>
 
-                    <?php if (!empty($besoin['description'])): ?>
+                    <div class="info-row">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <span class="info-label">Statut:</span>
+                        <?php
+                        $badgeClass = match($besoin['statut'] ?? 'en_cours') {
+                            'satisfait' => 'badge-success',
+                            'partiel' => 'badge-warning',
+                            default => 'badge-secondary'
+                        };
+                        ?>
+                        <span class="badge <?php echo $badgeClass; ?>">
+                            <?php echo htmlspecialchars(ucfirst($besoin['statut'] ?? 'en_cours')); ?>
+                        </span>
+                    </div>
+
+                    <?php if (!empty($besoin['description_besoin'])): ?>
                         <div class="info-row">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -78,7 +145,7 @@ $pageTitle = 'Détails du besoin - BNGRC';
                                 <line x1="16" y1="17" x2="8" y2="17"></line>
                             </svg>
                             <span class="info-label">Description:</span>
-                            <span class="info-value"><?php echo htmlspecialchars($besoin['description']); ?></span>
+                            <span class="info-value"><?php echo htmlspecialchars($besoin['description_besoin']); ?></span>
                         </div>
                     <?php endif; ?>
 
@@ -107,29 +174,6 @@ $pageTitle = 'Détails du besoin - BNGRC';
                     </div>
 
                     <div class="info-row">
-                        <?php 
-                            $statutClass = [
-                                'en_cours' => 'primary',
-                                'satisfait' => 'success',
-                                'partiel' => 'info'
-                            ];
-                            $statutLabel = [
-                                'en_cours' => 'En cours',
-                                'satisfait' => 'Satisfait',
-                                'partiel' => 'Partiel'
-                            ];
-                        ?>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                        </svg>
-                        <span class="info-label">Statut:</span>
-                        <span class="badge badge-<?php echo $statutClass[$besoin['statut']]; ?>">
-                            <?php echo $statutLabel[$besoin['statut']]; ?>
-                        </span>
-                    </div>
-
-                    <div class="info-row">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                             <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -143,7 +187,7 @@ $pageTitle = 'Détails du besoin - BNGRC';
                     <!-- Indicateur de progression -->
                     <?php 
                         // Calculer le montant total nécessaire
-                        $montantTotal = floatval($besoin['quantite']) * floatval($besoin['prix_unitaire']);
+                        $montantTotal = floatval($besoin['montant_total']);
                         
                         // Calculer le montant reçu (via dons dispatches)
                         $montantRecu = isset($besoin['montant_recu']) ? floatval($besoin['montant_recu']) : 0;

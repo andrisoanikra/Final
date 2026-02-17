@@ -120,17 +120,23 @@
                 <div class="article-item card" data-article-index="${articleIndex}" style="margin-bottom: 0.75rem; padding: 1rem; border: 1px solid var(--gray-300);">
                     <div class="row align-items-end">
                         <div class="col-md-5">
-                            <label class="form-label" style="font-size: 0.875rem;">Article</label>
+                            <label class="form-label" style="font-size: 0.875rem;">Article / Type</label>
                             <select class="form-control article-select" name="besoins[${besoinIndex}][articles][${articleIndex}][id_article]" required>
                                 ${createArticleOptions()}
+                                <option value="argent">💰 Besoin en argent</option>
                             </select>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-2 quantite-field">
                             <label class="form-label" style="font-size: 0.875rem;">Quantité</label>
-                            <input type="number" class="form-control" name="besoins[${besoinIndex}][articles][${articleIndex}][quantite]" 
+                            <input type="number" class="form-control quantite-input" name="besoins[${besoinIndex}][articles][${articleIndex}][quantite]" 
                                 placeholder="Ex: 100" step="0.01" min="0.01" required>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2 montant-field" style="display: none;">
+                            <label class="form-label" style="font-size: 0.875rem;">Montant (Ar)</label>
+                            <input type="number" class="form-control montant-input" name="besoins[${besoinIndex}][articles][${articleIndex}][montant]" 
+                                placeholder="Ex: 500000" step="0.01" min="0">
+                        </div>
+                        <div class="col-md-3 price-field">
                             <label class="form-label" style="font-size: 0.875rem;">
                                 Prix unitaire (Ar) 
                                 <small style="color: #6c757d;">✓ Auto</small>
@@ -265,8 +271,42 @@
 
         // Gérer le changement d'article (remplir le prix)
         function handleArticleChange(select) {
-            const priceInput = select.closest('.article-item').querySelector('.price-input');
+            const articleItem = select.closest('.article-item');
+            const priceInput = articleItem.querySelector('.price-input');
+            const quantiteField = articleItem.querySelector('.quantite-field');
+            const montantField = articleItem.querySelector('.montant-field');
+            const priceField = articleItem.querySelector('.price-field');
+            const quantiteInput = articleItem.querySelector('.quantite-input');
+            const montantInput = articleItem.querySelector('.montant-input');
             const selectedOption = select.options[select.selectedIndex];
+            const selectedValue = select.value;
+            
+            // Si c'est un besoin en argent
+            if (selectedValue === 'argent') {
+                quantiteField.style.display = 'none';
+                priceField.style.display = 'none';
+                montantField.style.display = 'block';
+                
+                quantiteInput.removeAttribute('required');
+                quantiteInput.value = '';
+                priceInput.removeAttribute('required');
+                priceInput.value = '';
+                montantInput.setAttribute('required', 'required');
+                
+                return;
+            }
+            
+            // Si c'est un article physique
+            quantiteField.style.display = 'block';
+            priceField.style.display = 'block';
+            montantField.style.display = 'none';
+            
+            quantiteInput.setAttribute('required', 'required');
+            priceInput.setAttribute('required', 'required');
+            montantInput.removeAttribute('required');
+            montantInput.value = '';
+            
+            // Remplir le prix automatiquement
             const price = selectedOption.getAttribute('data-price') || 0;
             
             if (priceInput) {

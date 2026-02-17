@@ -13,8 +13,20 @@ class BesoinsModel
     public function getBesoins()
     {
         $tmt = $this->db->runQuery("SELECT b.*, v.nom_ville, 
-            GROUP_CONCAT(a.nom_article SEPARATOR ', ') as articles, 
-            GROUP_CONCAT(tb.libelle_type SEPARATOR ', ') as types,
+            GROUP_CONCAT(
+                CASE 
+                    WHEN ba.id_article IS NULL THEN '💰 Argent'
+                    ELSE a.nom_article
+                END 
+                SEPARATOR ', '
+            ) as articles, 
+            GROUP_CONCAT(
+                CASE 
+                    WHEN ba.id_article IS NULL THEN 'Argent'
+                    ELSE tb.libelle_type
+                END 
+                SEPARATOR ', '
+            ) as types,
             (SELECT SUM(ba.quantite * ba.prix_unitaire) 
              FROM besoin_articles ba 
              WHERE ba.id_besoin = b.id_besoin) as montant_total,
@@ -25,7 +37,10 @@ class BesoinsModel
              FROM dispatch_dons dd
              JOIN dons d ON dd.id_don = d.id_don
              LEFT JOIN besoin_articles ba_prix ON dd.id_besoin = ba_prix.id_besoin AND d.id_article = ba_prix.id_article
-             WHERE dd.id_besoin = b.id_besoin), 0) as montant_recu
+             WHERE dd.id_besoin = b.id_besoin), 0) + 
+            COALESCE((SELECT SUM(montant_article)
+             FROM achats
+             WHERE id_besoin = b.id_besoin AND statut IN ('simule', 'valide')), 0) as montant_recu
         FROM besoins b
         LEFT JOIN villes v ON b.id_ville = v.id_ville
         LEFT JOIN besoin_articles ba ON b.id_besoin = ba.id_besoin
@@ -54,7 +69,10 @@ class BesoinsModel
              FROM dispatch_dons dd
              JOIN dons d ON dd.id_don = d.id_don
              LEFT JOIN besoin_articles ba_prix ON dd.id_besoin = ba_prix.id_besoin AND d.id_article = ba_prix.id_article
-             WHERE dd.id_besoin = b.id_besoin), 0) as montant_recu
+             WHERE dd.id_besoin = b.id_besoin), 0) + 
+            COALESCE((SELECT SUM(montant_article)
+             FROM achats
+             WHERE id_besoin = b.id_besoin AND statut IN ('simule', 'valide')), 0) as montant_recu
         FROM besoins b
         LEFT JOIN villes v ON b.id_ville = v.id_ville
         WHERE b.id_besoin = ?;", [$id]);
@@ -70,10 +88,18 @@ class BesoinsModel
 
     public function getArticlesDuBesoin($id_besoin)
     {
-        $tmt = $this->db->runQuery("SELECT ba.*, a.nom_article, tb.libelle_type
+        $tmt = $this->db->runQuery("SELECT ba.*, 
+        CASE 
+            WHEN ba.id_article IS NULL THEN '💰 Argent'
+            ELSE a.nom_article
+        END as nom_article,
+        CASE 
+            WHEN ba.id_article IS NULL THEN 'Argent'
+            ELSE tb.libelle_type
+        END as libelle_type
         FROM besoin_articles ba
-        JOIN articles a ON ba.id_article = a.id_article
-        JOIN type_besoin tb ON a.id_type_besoin = tb.id_type_besoin
+        LEFT JOIN articles a ON ba.id_article = a.id_article
+        LEFT JOIN type_besoin tb ON a.id_type_besoin = tb.id_type_besoin
         WHERE ba.id_besoin = ?;", [$id_besoin]);
         return $tmt->fetchAll();
     }
@@ -81,8 +107,20 @@ class BesoinsModel
     public function getBesoinsByVille($id_ville)
     {
         $tmt = $this->db->runQuery("SELECT b.*, v.nom_ville, 
-            GROUP_CONCAT(a.nom_article SEPARATOR ', ') as articles,
-            GROUP_CONCAT(tb.libelle_type SEPARATOR ', ') as types,
+            GROUP_CONCAT(
+                CASE 
+                    WHEN ba.id_article IS NULL THEN '💰 Argent'
+                    ELSE a.nom_article
+                END 
+                SEPARATOR ', '
+            ) as articles,
+            GROUP_CONCAT(
+                CASE 
+                    WHEN ba.id_article IS NULL THEN 'Argent'
+                    ELSE tb.libelle_type
+                END 
+                SEPARATOR ', '
+            ) as types,
             (SELECT SUM(ba.quantite * ba.prix_unitaire) 
              FROM besoin_articles ba 
              WHERE ba.id_besoin = b.id_besoin) as montant_total,
@@ -138,9 +176,9 @@ class BesoinsModel
     /**
      * Ajoute un article à un besoin
      * @param int $id_besoin
-     * @param int $id_article
-     * @param decimal $quantite
-     * @param decimal $prix_unitaire
+     * @param int|null $id_article NULL pour besoin en argent
+     * @param float $quantite
+     * @param float $prix_unitaire
      * @return int Nombre de lignes affectées
      */
     public function addArticleToBesoin($id_besoin, $id_article, $quantite, $prix_unitaire)
@@ -173,8 +211,20 @@ class BesoinsModel
     public function getBesoinsNonSatisfaits()
     {
         $tmt = $this->db->runQuery("SELECT b.*, v.nom_ville, 
-            GROUP_CONCAT(a.nom_article SEPARATOR ', ') as articles,
-            GROUP_CONCAT(tb.libelle_type SEPARATOR ', ') as types,
+            GROUP_CONCAT(
+                CASE 
+                    WHEN ba.id_article IS NULL THEN '💰 Argent'
+                    ELSE a.nom_article
+                END 
+                SEPARATOR ', '
+            ) as articles,
+            GROUP_CONCAT(
+                CASE 
+                    WHEN ba.id_article IS NULL THEN 'Argent'
+                    ELSE tb.libelle_type
+                END 
+                SEPARATOR ', '
+            ) as types,
             (SELECT SUM(ba.quantite * ba.prix_unitaire) 
              FROM besoin_articles ba 
              WHERE ba.id_besoin = b.id_besoin) as montant_total,
@@ -275,7 +325,10 @@ class BesoinsModel
                  FROM dispatch_dons dd
                  JOIN dons d ON dd.id_don = d.id_don
                  LEFT JOIN besoin_articles ba_prix ON dd.id_besoin = ba_prix.id_besoin AND d.id_article = ba_prix.id_article
-                 WHERE dd.id_besoin = b.id_besoin), 0) as montant_recu
+                 WHERE dd.id_besoin = b.id_besoin), 0) + 
+                COALESCE((SELECT SUM(montant_article)
+                 FROM achats
+                 WHERE id_besoin = b.id_besoin AND statut IN ('simule', 'valide')), 0) as montant_recu
             FROM besoins b
             LEFT JOIN villes v ON b.id_ville = v.id_ville
             LEFT JOIN besoin_articles ba ON b.id_besoin = ba.id_besoin

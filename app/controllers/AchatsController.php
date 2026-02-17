@@ -38,6 +38,7 @@ class AchatsController
             Flight::halt(404, 'Besoin introuvable');
         }
 
+        // Seuls les dons en argent DISPONIBLES ou PARTIEL (avec montant restant)
         $donsArgent = $this->achatsModel->getDonsArgentDisponibles();
         $articles = $besoin['articles']; // Articles du besoin
         $fraisPourcentage = $this->achatsModel->getFraisAchat();
@@ -51,44 +52,39 @@ class AchatsController
     }
 
     /**
-     * Crée un achat simulé
+     * Crée un achat automatique avec TOUT l'argent disponible du don
      */
     public function createAchatSimule()
     {
         $id_don_argent = $_POST['id_don_argent'] ?? null;
         $id_besoin = $_POST['id_besoin'] ?? null;
-        $id_article = $_POST['id_article'] ?? null;
-        $quantite = $_POST['quantite'] ?? null;
 
         // Validation
-        if (!$id_don_argent || !$id_besoin || !$id_article || !$quantite) {
-            Flight::redirect('/besoins/critiques-materiels?error=' . urlencode('Tous les champs sont requis'));
+        if (!$id_don_argent || !$id_besoin) {
+            Flight::redirect('/besoins/critiques-materiels?error=' . urlencode('Don et besoin requis'));
             return;
         }
 
-        // Vérifier si l'article existe déjà dans les dons
-        if ($this->achatsModel->articleExisteDansDons($id_article)) {
-            Flight::redirect('/achat/formulaire/' . $id_besoin . '?error=' . urlencode('Cet article existe déjà dans les dons disponibles. Utilisez le don existant au lieu d\'acheter.'));
+        // Récupérer le don et son montant disponible
+        $don = $this->donsModel->getDonById($id_don_argent);
+        if (!$don || !$don['montant_restant'] || $don['montant_restant'] <= 0) {
+            Flight::redirect('/besoins/critiques-materiels?error=' . urlencode('Don invalide ou montant insuffisant'));
             return;
         }
 
-        // Récupérer le prix unitaire de l'article
-        $article = $this->articlesModel->getArticleById($id_article);
-        $prix_unitaire = $article['prix_unitaire'];
+        $montant_disponible = $don['montant_restant'];
         $frais_pourcentage = $this->achatsModel->getFraisAchat();
 
-        // Créer l'achat simulé
-        $id_achat = $this->achatsModel->createAchatSimule(
+        // Créer l'achat automatique avec TOUT le montant disponible
+        $id_achat = $this->achatsModel->createAchatAutomatique(
             $id_don_argent,
             $id_besoin,
-            $id_article,
-            $quantite,
-            $prix_unitaire,
+            $montant_disponible,
             $frais_pourcentage
         );
 
         if ($id_achat) {
-            Flight::redirect('/achats/simulation?success=' . urlencode('Achat simulé créé avec succès'));
+            Flight::redirect('/achats/simulation?success=' . urlencode('Achat automatique créé avec ' . number_format($montant_disponible, 0, ',', ' ') . ' Ar'));
         } else {
             Flight::redirect('/achat/formulaire/' . $id_besoin . '?error=' . urlencode('Erreur lors de la création de l\'achat'));
         }

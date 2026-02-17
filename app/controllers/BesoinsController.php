@@ -74,12 +74,30 @@ class BesoinsController
                 $id_article = $article['id_article'] ?? null;
                 $quantite = $article['quantite'] ?? null;
                 $prix_unitaire = $article['prix_unitaire'] ?? null;
+                $montant = $article['montant'] ?? null;
 
                 if (empty($id_article)) {
                     $errors[] = "Besoin #" . ($index + 1) . ", Article #" . ($artIndex + 1) . " : Veuillez sélectionner un article";
                     continue;
                 }
 
+                // Si c'est un besoin en argent
+                if ($id_article === 'argent') {
+                    if (empty($montant) || $montant <= 0) {
+                        $errors[] = "Besoin #" . ($index + 1) . ", Article #" . ($artIndex + 1) . " : Le montant doit être supérieur à 0";
+                        continue;
+                    }
+
+                    $articlesValides[] = [
+                        'id_article' => null, // NULL pour argent
+                        'quantite' => 1, // Quantité fictive de 1
+                        'prix_unitaire' => $montant, // Le montant est le prix
+                        'is_argent' => true
+                    ];
+                    continue;
+                }
+
+                // Si c'est un article physique
                 if (empty($quantite) || $quantite <= 0) {
                     $errors[] = "Besoin #" . ($index + 1) . ", Article #" . ($artIndex + 1) . " : La quantité doit être supérieure à 0";
                     continue;
@@ -93,7 +111,8 @@ class BesoinsController
                 $articlesValides[] = [
                     'id_article' => $id_article,
                     'quantite' => $quantite,
-                    'prix_unitaire' => $prix_unitaire
+                    'prix_unitaire' => $prix_unitaire,
+                    'is_argent' => false
                 ];
             }
 
@@ -213,10 +232,19 @@ class BesoinsController
             Flight::halt(404, 'Besoin introuvable');
         }
         
+        // Construire le label avec les articles
+        $articlesLabel = '';
+        if (!empty($besoin['articles'])) {
+            $articlesNames = array_column($besoin['articles'], 'nom_article');
+            $articlesLabel = implode(', ', $articlesNames);
+        } else {
+            $articlesLabel = 'Articles non définis';
+        }
+        
         Flight::render('confirm_delete', [
             'entity' => 'besoin',
             'id' => $id,
-            'label' => 'Besoin: ' . $besoin['nom_article'] . ' - ' . $besoin['nom_ville'],
+            'label' => 'Besoin: ' . $articlesLabel . ' - ' . $besoin['nom_ville'],
             'back' => '/besoins',
             'details' => $besoin
         ]);

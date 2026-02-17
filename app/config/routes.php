@@ -8,6 +8,8 @@ use app\controllers\ArticleController;
 use app\controllers\DonsController;
 use app\controllers\TableauBordController;
 use app\controllers\AchatsController;
+use app\controllers\AdminController;
+use app\controllers\DistributionController;
 use app\middlewares\SecurityHeadersMiddleware;
 use flight\Engine;
 use flight\net\Router;
@@ -21,9 +23,9 @@ use app\controllers\ArticlesController;
 $router->group('/', function (Router $router) use ($app) {
 
 	$router->get('/formulaire-don', function() use ($app) {
-	$typeDonController = new TypeDonController($app);
+	$typeDonController = new TypeDonController();
 	$typeDons = $typeDonController->getAllTypes();
-	$articleController = new ArticleController($app);
+	$articleController = new ArticleController();
 	$articles = $articleController->getAllArticles();
     $app->render('formulaire-don', [
         'typeDons' => $typeDons,
@@ -34,6 +36,16 @@ $router->group('/', function (Router $router) use ($app) {
     // Accueil / Tableau de bord
    	$router->get('', [TableauBordController::class, 'index']);
    	$router->get('tableau-bord', [TableauBordController::class, 'index']);
+   	$router->get('recapitulation', [TableauBordController::class, 'recapitulation']);
+   	$router->get('api/recapitulatif', [TableauBordController::class, 'getRecapitulatifAjax']);
+
+	// Administration - Réinitialisation
+	$router->get('reset', [AdminController::class, 'confirmReset']);
+	$router->post('reset/execute', [AdminController::class, 'reset']);
+
+	// Distribution automatique
+	$router->get('distribution', [DistributionController::class, 'index']);
+	$router->post('distribution/executer', [DistributionController::class, 'distribuerParMontant']);
 
 	/* =======================
 	   BESOINS (routes fixes)
@@ -97,10 +109,14 @@ $router->group('/', function (Router $router) use ($app) {
 	$router->get('dons', [DonsController::class, 'getDons']);
 	$router->get('don/@id', [DonsController::class, 'getDonById']);
 
-	// Validation / Dispatch
-	$router->get('don/@id/valider', [DonsController::class, 'validerDon']);
+	// Validation / Dispatch - Choix de méthode
+	$router->get('don/@id/valider', [DonsController::class, 'choixDistribution']);
+	$router->post('don/@id/valider/dispatcher', [DonsController::class, 'validerDonDispatcher']);
+	$router->post('don/@id/valider/plus-petit', [DonsController::class, 'validerDonPlusPetit']);
+	$router->post('don/@id/valider/proportionnel', [DonsController::class, 'validerDonProportionnel']);
 
 	// Suppression
+	$router->get('don/@id/delete', [DonsController::class, 'confirmDeleteDon']);
 	$router->delete('don/@id', [DonsController::class, 'deleteDon']);
 	$router->post('don/@id/delete', [DonsController::class, 'deleteDon']);
 
@@ -109,6 +125,7 @@ $router->group('/', function (Router $router) use ($app) {
 	   ======================= */
 
 	$router->get('articles', [ArticlesController::class, 'index']);
+	$router->get('articles/create', [ArticlesController::class, 'ajouter']);
 	$router->get('articles/ajouter', [ArticlesController::class, 'ajouter']);
 	$router->post('articles/save', [ArticlesController::class, 'save']);
 	$router->get('articles/modifier/@id', [ArticlesController::class, 'modifier']);

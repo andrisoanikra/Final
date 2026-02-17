@@ -150,12 +150,28 @@ $pageTitle = 'Simulation et validation des achats - BNGRC';
                                 <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
                             </svg>
                             <span class="info-label">Article:</span>
-                            <span class="info-value"><?php echo htmlspecialchars($achat['nom_article']); ?> (<?php echo htmlspecialchars($achat['libelle_type']); ?>)</span>
+                            <span class="info-value">
+                                <?php 
+                                if ($achat['id_article']) {
+                                    echo htmlspecialchars($achat['nom_article']) . ' (' . htmlspecialchars($achat['libelle_type']) . ')';
+                                } else {
+                                    echo '💰 <strong>Conversion automatique d\'argent</strong>';
+                                }
+                                ?>
+                            </span>
                         </div>
 
                         <div class="info-row">
                             <span class="info-label">Quantité:</span>
-                            <span class="info-value font-bold"><?php echo number_format($achat['quantite'], 2); ?></span>
+                            <span class="info-value font-bold">
+                                <?php 
+                                if ($achat['id_article']) {
+                                    echo number_format($achat['quantite'], 2);
+                                } else {
+                                    echo '<em>N/A (conversion automatique)</em>';
+                                }
+                                ?>
+                            </span>
                         </div>
 
                         <div class="info-row">

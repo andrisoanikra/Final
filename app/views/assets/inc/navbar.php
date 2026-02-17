@@ -24,6 +24,18 @@
             </a>
         </div>
 
+        <!-- Récapitulation -->
+        <div class="nav-item">
+            <a class="nav-link" href="/recapitulation">
+                <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                <span class="link-text">Récapitulation</span>
+            </a>
+        </div>
+
         <!-- Besoins avec sous-menu -->
         <div class="nav-item has-submenu">
             <div class="nav-link-wrapper">
@@ -136,6 +148,20 @@
                 <a href="/villes">Liste des villes</a>
                 <a href="/ville/create">Ajouter une ville</a>
             </div>
+        </div>
+
+        <!-- Séparateur -->
+        <div style="height: 1px; background: var(--sidebar-border); margin: 1rem 1.5rem;"></div>
+
+        <!-- Réinitialisation -->
+        <div class="nav-item">
+            <a class="nav-link" href="/reset" style="color: #f59e0b;">
+                <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="1 4 1 10 7 10"></polyline>
+                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                </svg>
+                <span class="link-text">Réinitialiser</span>
+            </a>
         </div>
     </nav>
 </div>

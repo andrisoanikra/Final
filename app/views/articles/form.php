@@ -52,6 +52,12 @@ $pageTitle = (isset($article) ? 'Modifier' : 'Ajouter') . ' un article - BNGRC';
                     <textarea name="description" class="form-control" rows="4"><?= htmlspecialchars($article['description'] ?? '') ?></textarea>
                 </div>
                 
+                <div class="form-group">
+                    <label class="form-label">Prix unitaire (Ar) <span class="text-danger">*</span></label>
+                    <input type="number" name="prix_unitaire" class="form-control" step="0.01" min="0" value="<?= $article['prix_unitaire'] ?? '' ?>" required>
+                    <small class="form-text text-muted">Prix unitaire en Ariary</small>
+                </div>
+                
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

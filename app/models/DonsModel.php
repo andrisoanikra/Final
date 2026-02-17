@@ -406,4 +406,105 @@ class DonsModel
             'villes_satisfaites' => $villes_satisfaites
         ];
     }
+
+    /**
+     * Distribue un article à un besoin (pour distribution plus petit montant)
+     */
+    public function distribuerArticle($id_don, $id_besoin, $quantite)
+    {
+        // Récupérer les informations du besoin et de l'article
+        $tmt = $this->db->runQuery("
+            SELECT ba.prix_unitaire, ba.quantite_satisfaite, ba.quantite
+            FROM besoin_articles ba
+            JOIN dons d ON d.id_article = ba.id_article
+            WHERE ba.id_besoin = ? AND d.id_don = ?
+        ", [$id_besoin, $id_don]);
+        $article = $tmt->fetch();
+        
+        if (!$article) {
+            return false;
+        }
+        
+        $montant = $quantite * floatval($article['prix_unitaire']);
+        
+        // Insérer dans dispatch_dons
+        $this->db->runQuery("
+            INSERT INTO dispatch_dons (id_don, id_besoin, quantite_affectee, montant_affecte, date_dispatch)
+            VALUES (?, ?, ?, ?, NOW())
+        ", [$id_don, $id_besoin, $quantite, $montant]);
+        
+        // Mettre à jour quantite_restante du don
+        $this->db->runQuery("
+            UPDATE dons 
+            SET quantite_restante = GREATEST(0, quantite_restante - ?)
+            WHERE id_don = ?
+        ", [$quantite, $id_don]);
+        
+        // Mettre à jour quantite_satisfaite du besoin
+        $this->db->runQuery("
+            UPDATE besoin_articles 
+            SET quantite_satisfaite = quantite_satisfaite + ?
+            WHERE id_besoin = ? AND id_article = (SELECT id_article FROM dons WHERE id_don = ?)
+        ", [$quantite, $id_besoin, $id_don]);
+        
+        // Vérifier et mettre à jour le statut du besoin
+        $this->updateBesoinStatut($id_besoin);
+        
+        return true;
+    }
+
+    /**
+     * Distribue de l'argent à un besoin (pour distribution plus petit montant)
+     */
+    public function distribuerArgent($id_don, $id_besoin, $montant)
+    {
+        // Insérer dans dispatch_dons
+        $this->db->runQuery("
+            INSERT INTO dispatch_dons (id_don, id_besoin, quantite_affectee, montant_affecte, date_dispatch)
+            VALUES (?, ?, 0, ?, NOW())
+        ", [$id_don, $id_besoin, $montant]);
+        
+        // Mettre à jour montant_restant du don
+        $this->db->runQuery("
+            UPDATE dons 
+            SET montant_restant = GREATEST(0, montant_restant - ?)
+            WHERE id_don = ?
+        ", [$montant, $id_don]);
+        
+        // Mettre à jour le statut du besoin
+        $this->updateBesoinStatut($id_besoin);
+        
+        return true;
+    }
+
+    /**
+     * Met à jour le statut d'un besoin en fonction de sa satisfaction
+     */
+    private function updateBesoinStatut($id_besoin)
+    {
+        // Calculer montant total nécessaire et reçu
+        $tmt = $this->db->runQuery("
+            SELECT 
+                SUM(ba.quantite * ba.prix_unitaire) as montant_total,
+                (
+                    -- Somme des dispatch_dons
+                    COALESCE((SELECT SUM(montant_affecte) FROM dispatch_dons WHERE id_besoin = ?), 0)
+                    +
+                    -- Somme des achats
+                    COALESCE((SELECT SUM(montant_article) FROM achats WHERE id_besoin = ? AND statut IN ('simule', 'valide')), 0)
+                ) as montant_recu
+            FROM besoin_articles ba
+            WHERE ba.id_besoin = ?
+        ", [$id_besoin, $id_besoin, $id_besoin]);
+        
+        $result = $tmt->fetch();
+        $montant_total = floatval($result['montant_total']);
+        $montant_recu = floatval($result['montant_recu']);
+        
+        if ($montant_recu >= $montant_total) {
+            $this->db->runQuery("UPDATE besoins SET statut = 'satisfait' WHERE id_besoin = ?", [$id_besoin]);
+        } elseif ($montant_recu > 0) {
+            $this->db->runQuery("UPDATE besoins SET statut = 'partiel' WHERE id_besoin = ?", [$id_besoin]);
+        }
+    }
 }

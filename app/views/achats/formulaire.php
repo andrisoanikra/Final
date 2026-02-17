@@ -67,14 +67,18 @@ $pageTitle = 'Formulaire d\'achat - BNGRC';
             <a href="/don/create" class="btn btn-primary btn-sm mt-2">Ajouter un don</a>
         </div>
     <?php else: ?>
-        <!-- Formulaire d'achat -->
+        <!-- Formulaire d'achat automatique -->
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title mb-4">💳 Effectuer un achat</h5>
+                <h5 class="card-title mb-4">💳 Conversion automatique d'un don en argent</h5>
                 
                 <div class="alert alert-info">
-                    <strong>ℹ️ Information:</strong> Les achats incluent des frais de <strong><?php echo $fraisPourcentage; ?>%</strong>.
-                    Par exemple, un achat de 100 000 Ar coûtera <?php echo 100 + $fraisPourcentage; ?> 000 Ar au total.
+                    <strong>ℹ️ Fonctionnement:</strong> 
+                    <ul class="mb-0">
+                        <li>Le système utilise <strong>TOUT</strong> le montant disponible du don sélectionné</li>
+                        <li>Les frais d'achat de <strong><?php echo $fraisPourcentage; ?>%</strong> sont automatiquement appliqués</li>
+                        <li>L'argent converti sera utilisé pour couvrir les besoins critiques</li>
+                    </ul>
                 </div>
 
                 <form method="POST" action="/achat/create" id="achat-form">
@@ -94,62 +98,36 @@ $pageTitle = 'Formulaire d\'achat - BNGRC';
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <small class="form-text text-muted">Montant disponible: <span id="montant-dispo">0</span> Ar</small>
                     </div>
 
-                    <!-- Sélection de l'article -->
-                    <div class="form-group mb-3">
-                        <label class="form-label">📦 Article à acheter <span class="text-danger">*</span></label>
-                        <select class="form-control form-select" name="id_article" id="article-select" required>
-                            <option value="">-- Sélectionner un article --</option>
-                            <?php foreach ($articles as $article): ?>
-                                <option value="<?php echo $article['id_article']; ?>" 
-                                        data-prix="<?php echo $article['prix_unitaire']; ?>">
-                                    <?php echo htmlspecialchars($article['nom_article']); ?> - 
-                                    <?php echo number_format($article['prix_unitaire'], 0, ',', ' '); ?> Ar/unité
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                        <small class="form-text text-muted">Prix unitaire: <span id="prix-unitaire">0</span> Ar</small>
-                    </div>
-
-                    <!-- Quantité -->
-                    <div class="form-group mb-3">
-                        <label class="form-label">🔢 Quantité <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control" name="quantite" id="quantite-input" 
-                               placeholder="Ex: 100" step="0.01" min="0.01" required>
-                    </div>
-
-                    <!-- Récapitulatif -->
+                    <!-- Récapitulatif automatique -->
                     <div class="card bg-light mb-3">
                         <div class="card-body">
-                            <h6 class="card-title">📊 Récapitulatif de l'achat</h6>
+                            <h6 class="card-title">📊 Récapitulatif de la conversion</h6>
                             <table class="table table-sm table-borderless mb-0">
                                 <tr>
-                                    <td>Montant articles:</td>
-                                    <td class="text-end"><strong><span id="recap-montant-articles">0</span> Ar</strong></td>
+                                    <td>Montant total du don:</td>
+                                    <td class="text-end"><strong><span id="recap-montant-total">0</span> Ar</strong></td>
                                 </tr>
                                 <tr>
                                     <td>Frais d'achat (<?php echo $fraisPourcentage; ?>%):</td>
                                     <td class="text-end"><strong><span id="recap-frais">0</span> Ar</strong></td>
                                 </tr>
                                 <tr class="border-top">
-                                    <td><strong>TOTAL à payer:</strong></td>
-                                    <td class="text-end"><strong style="color: #dc3545; font-size: 18px;"><span id="recap-total">0</span> Ar</strong></td>
+                                    <td><strong>Montant net pour le besoin:</strong></td>
+                                    <td class="text-end"><strong style="color: #198754; font-size: 18px;"><span id="recap-net">0</span> Ar</strong></td>
                                 </tr>
                             </table>
+                            <div class="mt-2 text-muted small">
+                                <em>💡 Le montant net sera utilisé pour couvrir le besoin critique</em>
+                            </div>
                         </div>
-                    </div>
-
-                    <!-- Message d'avertissement -->
-                    <div id="warning-message" class="alert alert-warning" style="display: none;">
-                        <strong>⚠️ Attention:</strong> <span id="warning-text"></span>
                     </div>
 
                     <!-- Boutons -->
                     <div class="form-actions">
-                        <button type="submit" class="btn btn-primary" id="btn-submit">
-                            🛒 Créer l'achat simulé
+                        <button type="submit" class="btn btn-primary" id="btn-submit" disabled>
+                            ✅ Convertir ce don automatiquement
                         </button>
                         <a href="/besoins/critiques-materiels" class="btn btn-secondary">Annuler</a>
                     </div>
@@ -163,50 +141,30 @@ $pageTitle = 'Formulaire d\'achat - BNGRC';
 document.addEventListener('DOMContentLoaded', function() {
     const fraisPourcentage = <?php echo $fraisPourcentage; ?>;
     const donSelect = document.getElementById('don-select');
-    const articleSelect = document.getElementById('article-select');
-    const quantiteInput = document.getElementById('quantite-input');
     const btnSubmit = document.getElementById('btn-submit');
 
     function calculerRecapitulatif() {
-        const prixUnitaire = parseFloat(articleSelect.options[articleSelect.selectedIndex]?.dataset.prix || 0);
-        const quantite = parseFloat(quantiteInput.value || 0);
-        const montantDispo = parseFloat(donSelect.options[donSelect.selectedIndex]?.dataset.montant || 0);
+        const montantTotal = parseFloat(donSelect.options[donSelect.selectedIndex]?.dataset.montant || 0);
 
-        const montantArticles = prixUnitaire * quantite;
-        const montantFrais = montantArticles * (fraisPourcentage / 100);
-        const montantTotal = montantArticles + montantFrais;
+        if (montantTotal > 0) {
+            // Montant net = montant_total / (1 + frais%)
+            const montantNet = montantTotal / (1 + (fraisPourcentage / 100));
+            const montantFrais = montantTotal - montantNet;
 
-        document.getElementById('recap-montant-articles').textContent = montantArticles.toLocaleString('fr-FR');
-        document.getElementById('recap-frais').textContent = montantFrais.toLocaleString('fr-FR');
-        document.getElementById('recap-total').textContent = montantTotal.toLocaleString('fr-FR');
+            document.getElementById('recap-montant-total').textContent = montantTotal.toLocaleString('fr-FR');
+            document.getElementById('recap-frais').textContent = montantFrais.toLocaleString('fr-FR');
+            document.getElementById('recap-net').textContent = montantNet.toLocaleString('fr-FR');
 
-        // Vérifier si le montant est suffisant
-        const warningDiv = document.getElementById('warning-message');
-        const warningText = document.getElementById('warning-text');
-        
-        if (montantTotal > montantDispo && montantDispo > 0) {
-            warningText.textContent = `Fonds insuffisants ! Il manque ${(montantTotal - montantDispo).toLocaleString('fr-FR')} Ar.`;
-            warningDiv.style.display = 'block';
-            btnSubmit.disabled = true;
-        } else {
-            warningDiv.style.display = 'none';
             btnSubmit.disabled = false;
+        } else {
+            document.getElementById('recap-montant-total').textContent = '0';
+            document.getElementById('recap-frais').textContent = '0';
+            document.getElementById('recap-net').textContent = '0';
+            btnSubmit.disabled = true;
         }
     }
 
-    donSelect.addEventListener('change', function() {
-        const montant = this.options[this.selectedIndex]?.dataset.montant || 0;
-        document.getElementById('montant-dispo').textContent = parseFloat(montant).toLocaleString('fr-FR');
-        calculerRecapitulatif();
-    });
-
-    articleSelect.addEventListener('change', function() {
-        const prix = this.options[this.selectedIndex]?.dataset.prix || 0;
-        document.getElementById('prix-unitaire').textContent = parseFloat(prix).toLocaleString('fr-FR');
-        calculerRecapitulatif();
-    });
-
-    quantiteInput.addEventListener('input', calculerRecapitulatif);
+    donSelect.addEventListener('change', calculerRecapitulatif);
 });
 </script>
 

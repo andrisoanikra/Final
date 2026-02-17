@@ -64,20 +64,20 @@ class ArticlesModel
     /**
      * Ajoute un nouvel article
      */
-    public function createArticle($nom_article, $id_type_besoin, $description)
+    public function createArticle($nom_article, $id_type_besoin, $description, $prix_unitaire = 0)
     {
-        $sql = "INSERT INTO articles (nom_article, id_type_besoin, description) VALUES (?, ?, ?)";
-        $this->db->runQuery($sql, [$nom_article, $id_type_besoin, $description]);
+        $sql = "INSERT INTO articles (nom_article, id_type_besoin, description, prix_unitaire) VALUES (?, ?, ?, ?)";
+        $this->db->runQuery($sql, [$nom_article, $id_type_besoin, $description, $prix_unitaire]);
         return $this->db->lastInsertId();
     }
 
     /**
      * Met à jour un article
      */
-    public function updateArticle($id, $nom_article, $id_type_besoin, $description)
+    public function updateArticle($id, $nom_article, $id_type_besoin, $description, $prix_unitaire = 0)
     {
-        $sql = "UPDATE articles SET nom_article = ?, id_type_besoin = ?, description = ? WHERE id_article = ?";
-        $stmt = $this->db->runQuery($sql, [$nom_article, $id_type_besoin, $description, $id]);
+        $sql = "UPDATE articles SET nom_article = ?, id_type_besoin = ?, description = ?, prix_unitaire = ? WHERE id_article = ?";
+        $stmt = $this->db->runQuery($sql, [$nom_article, $id_type_besoin, $description, $prix_unitaire, $id]);
         return $stmt->rowCount() > 0;
     }
 
@@ -86,8 +86,8 @@ class ArticlesModel
      */
     public function deleteArticle($id)
     {
-        // Vérifier si l'article est utilisé dans besoins
-        $checkBesoins = $this->db->runQuery("SELECT COUNT(*) as count FROM besoins WHERE id_article = ?", [$id])->fetch();
+        // Vérifier si l'article est utilisé dans besoin_articles
+        $checkBesoins = $this->db->runQuery("SELECT COUNT(*) as count FROM besoin_articles WHERE id_article = ?", [$id])->fetch();
         if($checkBesoins['count'] > 0) {
             return false;
         }

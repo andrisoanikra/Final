@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS achats (
     id_achat INT PRIMARY KEY AUTO_INCREMENT,
     id_don_argent INT NOT NULL,
     id_besoin INT NOT NULL,
-    id_article INT NOT NULL,
+    id_article INT NULL, -- NULL pour les achats automatiques sans article spécifique
     quantite DECIMAL(15,2) NOT NULL,
     prix_unitaire DECIMAL(15,2) NOT NULL,
     montant_article DECIMAL(15,2) NOT NULL,
@@ -30,6 +30,6 @@ CREATE TABLE IF NOT EXISTS achats (
     date_validation TIMESTAMP NULL,
     FOREIGN KEY (id_don_argent) REFERENCES dons(id_don),
     FOREIGN KEY (id_besoin) REFERENCES besoins(id_besoin),
-    FOREIGN KEY (id_article) REFERENCES articles(id_article),
+    FOREIGN KEY (id_article) REFERENCES articles(id_article) ON DELETE SET NULL,
     FOREIGN KEY (id_don_cree) REFERENCES dons(id_don) ON DELETE SET NULL
 );

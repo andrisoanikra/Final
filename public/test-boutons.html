@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test des Boutons - BNGRC</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { padding: 20px; background: #f5f5f5; }
+        .test-section { background: white; padding: 20px; margin-bottom: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .test-link { display: inline-block; margin: 5px; }
+        .status-ok { color: green; }
+        .status-error { color: red; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mb-4">🧪 Test des Boutons et Fonctionnalités</h1>
+        
+        <div class="test-section">
+            <h2>📊 Tableau de Bord</h2>
+            <div class="test-link"><a href="/tableau-bord" class="btn btn-primary" target="_blank">Tableau de Bord</a></div>
+            <div class="test-link"><a href="/recapitulation" class="btn btn-primary" target="_blank">Récapitulation</a></div>
+            <div class="test-link"><a href="/api/recapitulatif" class="btn btn-info" target="_blank">API Récapitulatif (JSON)</a></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🏙️ Villes</h2>
+            <div class="test-link"><a href="/villes" class="btn btn-primary" target="_blank">Liste des villes</a></div>
+            <div class="test-link"><a href="/ville/create" class="btn btn-success" target="_blank">Créer une ville</a></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📋 Besoins</h2>
+            <div class="test-link"><a href="/besoins" class="btn btn-primary" target="_blank">Liste des besoins</a></div>
+            <div class="test-link"><a href="/besoin/create" class="btn btn-success" target="_blank">Créer un besoin</a></div>
+            <div class="test-link"><a href="/besoins/non-satisfaits" class="btn btn-warning" target="_blank">Besoins non satisfaits</a></div>
+            <div class="test-link"><a href="/besoins/critiques-materiels" class="btn btn-danger" target="_blank">Besoins critiques matériels</a></div>
+            <div class="test-link"><a href="/besoins/villes-satisfaites" class="btn btn-info" target="_blank">Villes satisfaites</a></div>
+        </div>
+
+        <div class="test-section">
+            <h2>💝 Dons</h2>
+            <div class="test-link"><a href="/dons" class="btn btn-primary" target="_blank">Liste des dons</a></div>
+            <div class="test-link"><a href="/don/create" class="btn btn-success" target="_blank">Créer un don</a></div>
+            <div class="test-link"><a href="/formulaire-don" class="btn btn-success" target="_blank">Formulaire don (alt)</a></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📦 Articles</h2>
+            <div class="test-link"><a href="/articles" class="btn btn-primary" target="_blank">Liste des articles</a></div>
+            <div class="test-link"><a href="/articles/ajouter" class="btn btn-success" target="_blank">Ajouter un article</a></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🛒 Achats</h2>
+            <div class="test-link"><a href="/achats/simulation" class="btn btn-primary" target="_blank">Simulation des achats</a></div>
+            <div class="alert alert-info mt-3">
+                <strong>Note:</strong> Pour tester le formulaire d'achat, allez d'abord dans "Besoins critiques matériels" 
+                et cliquez sur un besoin pour créer un achat.
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>✅ Vérifications</h2>
+            <div id="verification-results"></div>
+            <button onclick="runTests()" class="btn btn-warning">Lancer les tests automatiques</button>
+        </div>
+    </div>
+
+    <script>
+        async function runTests() {
+            const results = document.getElementById('verification-results');
+            results.innerHTML = '<div class="spinner-border" role="status"></div> Tests en cours...';
+            
+            const tests = [
+                { name: 'API Récapitulatif', url: '/api/recapitulatif' },
+                { name: 'Tableau de bord', url: '/tableau-bord' },
+                { name: 'Liste des villes', url: '/villes' },
+                { name: 'Liste des besoins', url: '/besoins' },
+                { name: 'Liste des dons', url: '/dons' },
+                { name: 'Liste des articles', url: '/articles' }
+            ];
+
+            let html = '<ul class="list-group">';
+            
+            for (const test of tests) {
+                try {
+                    const response = await fetch(test.url);
+                    const status = response.ok ? '✅' : '❌';
+                    const statusClass = response.ok ? 'status-ok' : 'status-error';
+                    html += `<li class="list-group-item"><span class="${statusClass}">${status}</span> ${test.name} - Status: ${response.status}</li>`;
+                } catch (error) {
+                    html += `<li class="list-group-item"><span class="status-error">❌</span> ${test.name} - Erreur: ${error.message}</li>`;
+                }
+            }
+            
+            html += '</ul>';
+            results.innerHTML = html;
+        }
+
+        // Test automatique au chargement
+        window.addEventListener('load', function() {
+            setTimeout(runTests, 1000);
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

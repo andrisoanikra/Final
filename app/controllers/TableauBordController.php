@@ -123,4 +123,104 @@ class TableauBordController
         
         return $tmt->fetchAll();
     }
+
+    /**
+     * Affiche la page de récapitulation des besoins
+     */
+    public function recapitulation()
+    {
+        Flight::render('tableau-bord/recapitulation', []);
+    }
+
+    /**
+     * API Ajax : Récupère les statistiques des besoins
+     */
+    public function getRecapitulatifAjax()
+    {
+        $stats = $this->getStatistiquesBesoins();
+        
+        header('Content-Type: application/json');
+        echo json_encode($stats);
+        exit;
+    }
+
+    /**
+     * Calcule les statistiques des besoins (totaux, satisfaits, restants)
+     */
+    private function getStatistiquesBesoins()
+    {
+        // Besoins totaux en montant
+        $tmt = $this->db->runQuery("
+            SELECT 
+                COALESCE(SUM(ba.quantite * ba.prix_unitaire), 0) as montant_total
+            FROM besoins b
+            JOIN besoin_articles ba ON b.id_besoin = ba.id_besoin
+        ");
+        $resultTotal = $tmt->fetch();
+        $montantTotal = $resultTotal['montant_total'] ?? 0;
+
+        // Besoins satisfaits en montant
+        $tmt = $this->db->runQuery("
+            SELECT 
+                COALESCE(SUM(ba.quantite * ba.prix_unitaire), 0) as montant_satisfait
+            FROM besoins b
+            JOIN besoin_articles ba ON b.id_besoin = ba.id_besoin
+            WHERE b.statut = 'satisfait'
+        ");
+        $resultSatisfait = $tmt->fetch();
+        $montantSatisfait = $resultSatisfait['montant_satisfait'] ?? 0;
+
+        // Montant des besoins partiellement satisfaits (on prend le montant total des besoins partiels)
+        $tmt = $this->db->runQuery("
+            SELECT 
+                COALESCE(SUM(ba.quantite * ba.prix_unitaire), 0) as montant_partiel
+            FROM besoins b
+            JOIN besoin_articles ba ON b.id_besoin = ba.id_besoin
+            WHERE b.statut = 'partiel'
+        ");
+        $resultPartiel = $tmt->fetch();
+        $montantPartiel = $resultPartiel['montant_partiel'] ?? 0;
+
+        // Montant restant = Total - Satisfait
+        $montantRestant = $montantTotal - $montantSatisfait;
+
+        // Nombre de besoins par statut
+        $tmt = $this->db->runQuery("
+            SELECT 
+                COUNT(CASE WHEN statut = 'en_cours' THEN 1 END) as nb_en_cours,
+                COUNT(CASE WHEN statut = 'satisfait' THEN 1 END) as nb_satisfaits,
+                COUNT(CASE WHEN statut = 'partiel' THEN 1 END) as nb_partiels,
+                COUNT(*) as nb_total
+            FROM besoins
+        ");
+        $resultNombres = $tmt->fetch();
+
+        // Statistiques sur les dons
+        $tmt = $this->db->runQuery("
+            SELECT 
+                COUNT(*) as nb_dons_total,
+                COUNT(CASE WHEN statut = 'disponible' THEN 1 END) as nb_dons_disponibles,
+                COUNT(CASE WHEN statut = 'affecte' OR statut = 'dispatche' THEN 1 END) as nb_dons_dispatches,
+                COALESCE(SUM(CASE WHEN id_type_don = 3 AND statut = 'disponible' THEN montant_argent ELSE 0 END), 0) as montant_argent_disponible
+            FROM dons
+        ");
+        $resultDons = $tmt->fetch();
+
+        return [
+            'montant_total' => floatval($montantTotal),
+            'montant_satisfait' => floatval($montantSatisfait),
+            'montant_restant' => floatval($montantRestant),
+            'montant_partiel' => floatval($montantPartiel),
+            'pourcentage_satisfait' => $montantTotal > 0 ? round(($montantSatisfait / $montantTotal) * 100, 2) : 0,
+            'nb_besoins_total' => intval($resultNombres['nb_total'] ?? 0),
+            'nb_besoins_en_cours' => intval($resultNombres['nb_en_cours'] ?? 0),
+            'nb_besoins_satisfaits' => intval($resultNombres['nb_satisfaits'] ?? 0),
+            'nb_besoins_partiels' => intval($resultNombres['nb_partiels'] ?? 0),
+            'nb_dons_total' => intval($resultDons['nb_dons_total'] ?? 0),
+            'nb_dons_disponibles' => intval($resultDons['nb_dons_disponibles'] ?? 0),
+            'nb_dons_dispatches' => intval($resultDons['nb_dons_dispatches'] ?? 0),
+            'montant_argent_disponible' => floatval($resultDons['montant_argent_disponible'] ?? 0),
+            'date_actualisation' => date('d/m/Y H:i:s')
+        ];
+    }
 }

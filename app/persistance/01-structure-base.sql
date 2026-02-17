@@ -65,8 +65,9 @@ CREATE TABLE besoins (
 CREATE TABLE besoin_articles (
     id_besoin_article INT PRIMARY KEY AUTO_INCREMENT,
     id_besoin INT NOT NULL,
-    id_article INT NOT NULL,
+    id_article INT NULL,  -- NULL pour besoin en argent
     quantite DECIMAL(15,2) NOT NULL,
+    quantite_satisfaite DECIMAL(15,2) DEFAULT 0,
     prix_unitaire DECIMAL(15,2) NOT NULL,
     FOREIGN KEY (id_besoin) REFERENCES besoins(id_besoin) ON DELETE CASCADE,
     FOREIGN KEY (id_article) REFERENCES articles(id_article)
@@ -89,7 +90,9 @@ CREATE TABLE dons (
     id_article INT NULL, -- NULL si don en argent
     description_don VARCHAR(255),
     quantite DECIMAL(15,2) NULL, -- NULL si don en argent
+    quantite_restante DECIMAL(15,2) NULL, -- Quantité encore disponible
     montant_argent DECIMAL(15,2) NULL, -- NULL si don en nature/materiau
+    montant_restant DECIMAL(15,2) NULL, -- Montant encore disponible
     date_don DATETIME DEFAULT CURRENT_TIMESTAMP,
     donateur_nom VARCHAR(100),
     donateur_contact VARCHAR(50),

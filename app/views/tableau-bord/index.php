@@ -19,6 +19,33 @@ $pageTitle = 'Tableau de Bord - BNGRC';
         </h1>
     </div>
 
+    <?php if (isset($_GET['success'])): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <?php 
+                if ($_GET['success'] == 'reset') {
+                    echo isset($_GET['message']) ? htmlspecialchars($_GET['message']) : '✅ Réinitialisation effectuée avec succès!';
+                } else {
+                    echo htmlspecialchars($_GET['message'] ?? 'Opération réussie!');
+                }
+            ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
+
+    <?php if (isset($_GET['warning'])): ?>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <?php echo htmlspecialchars($_GET['warning']); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
+
+    <?php if (isset($_GET['error'])): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            ❌ <?php echo htmlspecialchars($_GET['error']); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
+
             <?php if (empty($villes)): ?>
                 <div class="empty-state">
                     <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -107,9 +134,11 @@ $pageTitle = 'Tableau de Bord - BNGRC';
                                     <h3><?php echo htmlspecialchars($ville['nom_ville']); ?></h3>
                                 </div>
                                 <div class="ville-badges">
-                                    <span class="badge badge-secondary">
-                                        <?php echo htmlspecialchars($ville['nom_region']); ?>
-                                    </span>
+                                    <?php if ($ville['nom_region']): ?>
+                                        <span class="badge badge-secondary">
+                                            <?php echo htmlspecialchars($ville['nom_region']); ?>
+                                        </span>
+                                    <?php endif; ?>
                                     <?php if ($ville['population']): ?>
                                         <span class="badge badge-info">
                                             <?php echo number_format($ville['population'], 0, ',', ' '); ?> hab.

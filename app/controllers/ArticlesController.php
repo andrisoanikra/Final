@@ -39,9 +39,10 @@ class ArticlesController
             $nom = $_POST['nom_article'] ?? '';
             $type = $_POST['id_type_besoin'] ?? '';
             $description = $_POST['description'] ?? '';
+            $prix_unitaire = $_POST['prix_unitaire'] ?? 0;
             
-            if(!empty($nom) && !empty($type)) {
-                $this->model->createArticle($nom, $type, $description);
+            if(!empty($nom) && !empty($type) && $prix_unitaire > 0) {
+                $this->model->createArticle($nom, $type, $description, $prix_unitaire);
                 header('Location: /articles?success=1');
                 exit;
             } else {
@@ -72,9 +73,10 @@ class ArticlesController
             $nom = $_POST['nom_article'] ?? '';
             $type = $_POST['id_type_besoin'] ?? '';
             $description = $_POST['description'] ?? '';
+            $prix_unitaire = $_POST['prix_unitaire'] ?? 0;
             
-            if(!empty($nom) && !empty($type)) {
-                $this->model->updateArticle($id, $nom, $type, $description);
+            if(!empty($nom) && !empty($type) && $prix_unitaire > 0) {
+                $this->model->updateArticle($id, $nom, $type, $description, $prix_unitaire);
                 header('Location: /articles?updated=1');
                 exit;
             } else {

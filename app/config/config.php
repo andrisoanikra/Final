@@ -68,9 +68,9 @@ return [
 	'database' => [
 		//MySQL Example:
 		'host'     => 'localhost',      // Database host (e.g., 'localhost', 'db.example.com')
-		'dbname'   => 'db_s2_ETU004369',   // Database name (e.g., 'flightphp')
-		'user'     => 'ETU004369',  // Database user (e.g., 'root')
-		'password' => '1FTTeygK',  // Database password (never commit real passwords)
+		'dbname'   => 'bngrc_dons',   // Database name (e.g., 'flightphp')
+		'user'     => 'root',  // Database user (e.g., 'root')
+		'password' => '',  // Database password (never commit real passwords)
 
 		// SQLite Example:
 		// 'file_path' => __DIR__ . $ds . '..' . $ds . 'database.sqlite', // Path to SQLite file
@@ -82,6 +82,10 @@ return [
 	//     'client_secret' => 'your_client_secret', // Google API client secret
 	//     'redirect_uri'  => 'your_redirect_uri',  // Redirect URI for OAuth callback
 	// ],
-
+//MySQL Example:
+	//	'host'     => 'localhost',      // Database host (e.g., 'localhost', 'db.example.com')
+	//	'dbname'   => 'db_s2_ETU004369',   // Database name (e.g., 'flightphp')
+	//	'user'     => 'ETU004369',  // Database user (e.g., 'root')
+	//	'password' => '1FTTeygK',  
 	// Add more configuration sections below as needed
 ];

@@ -49,27 +49,27 @@ INSERT INTO besoins (id_ville, description, urgence, statut) VALUES
 -- 5. ARTICLES DES BESOINS
 -- ========================================
 -- Besoin 1: Aide alimentaire orphelinat
-INSERT INTO besoin_articles (id_besoin, id_article, quantite, prix_unitaire) VALUES 
-(1, 1, 500, 2500),      -- 500kg de riz
-(1, 2, 100, 4000),      -- 100kg haricots
-(1, 3, 50, 15000);      -- 50L huile
+       INSERT INTO besoin_articles (id_besoin, id_article, quantite, prix_unitaire,quantite_satisfaite) VALUES 
+       (1, 1, 500, 2500, 500),      -- 500kg de riz
+       (1, 2, 100, 4000, 100),      -- 100kg haricots
+       (1, 3, 50, 15000, 50);      -- 50L huile
 
 -- Besoin 2: Matériaux école
-INSERT INTO besoin_articles (id_besoin, id_article, quantite, prix_unitaire) VALUES 
-(2, 7, 200, 45000),     -- 200 sacs ciment
-(2, 8, 1000, 500),      -- 1000 clous
-(2, 9, 100, 35000);     -- 100m3 bois
+INSERT INTO besoin_articles (id_besoin, id_article, quantite, prix_unitaire,quantite_satisfaite) VALUES 
+(2, 7, 200, 45000, 200),     -- 200 sacs ciment
+(2, 8, 1000, 500, 1000),      -- 1000 clous
+(2, 9, 100, 35000, 100);     -- 100m3 bois
 
 -- Besoin 3: Ravitaillement côtier
-INSERT INTO besoin_articles (id_besoin, id_article, quantite, prix_unitaire) VALUES 
-(3, 1, 300, 2500),      -- 300kg riz
-(3, 4, 150, 8000),      -- 150kg sucre
-(3, 5, 80, 5000);       -- 80kg farine
+INSERT INTO besoin_articles (id_besoin, id_article, quantite, prix_unitaire,quantite_satisfaite) VALUES 
+(3, 1, 300, 2500, 300),      -- 300kg riz
+(3, 4, 150, 8000, 150),      -- 150kg sucre
+(3, 5, 80, 5000, 80);       -- 80kg farine
 
 -- Besoin 4: Toitures
-INSERT INTO besoin_articles (id_besoin, id_article, quantite, prix_unitaire) VALUES 
-(4, 6, 150, 55000),     -- 150 tôles ondulées
-(4, 10, 500, 12000);    -- 500 briques
+INSERT INTO besoin_articles (id_besoin, id_article, quantite, prix_unitaire,quantite_satisfaite ) VALUES 
+(4, 6, 150, 55000, 150),     -- 150 tôles ondulées
+(4, 10, 500, 12000, 500);    -- 500 briques
 
 -- ========================================
 -- 6. DONS

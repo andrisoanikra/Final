@@ -6,6 +6,7 @@ use Flight;
 use app\models\DonsModel;
 use app\models\TypeDonModel;
 use app\models\ArticlesModel;
+use app\models\BesoinsModel;
 
 class DonsController
 {
@@ -190,6 +191,35 @@ class DonsController
     }
 
     /**
+     * Page de confirmation de suppression de don
+     */
+    public function confirmDeleteDon($id)
+    {
+        $don = $this->donsModel->getDonById($id);
+        
+        if (!$don) {
+            Flight::halt(404, 'Don introuvable');
+        }
+        
+        // Construire le label
+        $label = 'Don de ';
+        if (!empty($don['nom_article'])) {
+            $label .= $don['nom_article'] . ' (Qté: ' . $don['quantite'] . ')';
+        } else {
+            $label .= number_format($don['montant_argent'], 0, ',', ' ') . ' Ar';
+        }
+        $label .= ' - ' . $don['donateur_nom'];
+        
+        Flight::render('confirm_delete', [
+            'entity' => 'don',
+            'id' => $id,
+            'label' => $label,
+            'back' => '/dons',
+            'details' => $don
+        ]);
+    }
+
+    /**
      * Supprime un don
      */
     public function deleteDon($id)
@@ -229,9 +259,30 @@ class DonsController
     }
 
     /**
-     * Valide un don et le dispatche vers les besoins
+     * Affiche le choix de méthode de distribution pour un don
      */
-    public function validerDon($id)
+    public function choixDistribution($id)
+    {
+        $don = $this->donsModel->getDonById($id);
+        
+        if (!$don) {
+            Flight::halt(404, 'Don introuvable');
+        }
+        
+        if ($don['statut'] !== 'disponible') {
+            Flight::redirect('/dons?error=' . urlencode('Ce don n\'est plus disponible pour distribution'));
+            return;
+        }
+        
+        Flight::render('dons/choix-distribution', [
+            'don' => $don
+        ]);
+    }
+
+    /**
+     * Valide un don avec la méthode dispatcher (manuel)
+     */
+    public function validerDonDispatcher($id)
     {
         $result = $this->donsModel->dispatcherDon($id);
         
@@ -255,6 +306,285 @@ class DonsController
             Flight::redirect('/dons?success=don_valide&message=' . urlencode($message));
         } else {
             Flight::redirect('/dons?error=' . urlencode($result['message']));
+        }
+    }
+
+    /**
+     * Valide un don avec la méthode "plus petit montant d'abord"
+     */
+    public function validerDonPlusPetit($id)
+    {
+        $don = $this->donsModel->getDonById($id);
+        
+        if (!$don) {
+            Flight::redirect('/dons?error=' . urlencode('Don introuvable'));
+            return;
+        }
+        
+        if ($don['statut'] !== 'disponible') {
+            Flight::redirect('/dons?error=' . urlencode('Ce don n\'est plus disponible'));
+            return;
+        }
+        
+        // Utiliser le modèle BesoinsModel avec la connexion DB
+        $besoinsModel = new BesoinsModel($this->db);
+        
+        // Récupérer les besoins non satisfaits triés par montant
+        $besoins = $besoinsModel->getBesoinsNonSatisfaits();
+        
+        if (empty($besoins)) {
+            Flight::redirect('/dons?error=' . urlencode('Aucun besoin à satisfaire actuellement'));
+            return;
+        }
+        
+        // Trier par montant total croissant (du plus petit au plus grand)
+        usort($besoins, function($a, $b) {
+            $montantA = floatval($a['montant_total']);
+            $montantB = floatval($b['montant_total']);
+            return $montantA <=> $montantB;
+        });
+        
+        $quantite_disponible = floatval($don['quantite_restante'] ?? $don['quantite']);
+        $montant_disponible = floatval($don['montant_restant'] ?? $don['montant_argent']);
+        $nbDistributions = 0;
+        $montantTotal = 0;
+        $quantiteTotal = 0;
+        
+        foreach ($besoins as $besoin) {
+            if ($quantite_disponible <= 0 && $montant_disponible <= 0) {
+                break;
+            }
+            
+            // Si don matériel
+            if ($don['id_article']) {
+                // Récupérer les détails de l'article du besoin
+                $tmt = $this->db->runQuery("
+                    SELECT ba.quantite, ba.quantite_satisfaite, ba.prix_unitaire, ba.id_article
+                    FROM besoin_articles ba
+                    WHERE ba.id_besoin = ? AND ba.id_article = ?
+                ", [$besoin['id_besoin'], $don['id_article']]);
+                $articleBesoin = $tmt->fetch();
+                
+                if ($articleBesoin) {
+                    $quantiteNecessaire = floatval($articleBesoin['quantite']) - floatval($articleBesoin['quantite_satisfaite']);
+                    
+                    if ($quantiteNecessaire > 0) {
+                        $quantiteADistribuer = min($quantite_disponible, $quantiteNecessaire);
+                        
+                        if ($quantiteADistribuer > 0) {
+                            $this->donsModel->distribuerArticle($don['id_don'], $besoin['id_besoin'], $quantiteADistribuer);
+                            $quantite_disponible -= $quantiteADistribuer;
+                            $quantiteTotal += $quantiteADistribuer;
+                            $nbDistributions++;
+                        }
+                    }
+                }
+            }
+            // Si don en argent
+            else {
+                $montantNecessaire = floatval($besoin['montant_total']) - floatval($besoin['montant_recu']);
+                
+                if ($montantNecessaire > 0) {
+                    $montantADistribuer = min($montant_disponible, $montantNecessaire);
+                    
+                    if ($montantADistribuer > 0) {
+                        $this->donsModel->distribuerArgent($don['id_don'], $besoin['id_besoin'], $montantADistribuer);
+                        $montant_disponible -= $montantADistribuer;
+                        $montantTotal += $montantADistribuer;
+                        $nbDistributions++;
+                    }
+                }
+            }
+        }
+        
+        // Mettre à jour le statut du don
+        if ($don['id_article']) {
+            if ($quantite_disponible <= 0) {
+                $this->donsModel->updateStatut($don['id_don'], 'affecte');
+            } elseif ($quantite_disponible < floatval($don['quantite'])) {
+                $this->donsModel->updateStatut($don['id_don'], 'partiel');
+            }
+        } else {
+            if ($montant_disponible <= 0) {
+                $this->donsModel->updateStatut($don['id_don'], 'affecte');
+            } elseif ($montant_disponible < floatval($don['montant_argent'])) {
+                $this->donsModel->updateStatut($don['id_don'], 'partiel');
+            }
+        }
+        
+        if ($nbDistributions > 0) {
+            $message = "Don distribué avec succès selon la méthode 'Plus petit montant d'abord' ! ";
+            $message .= "$nbDistributions besoin(s) satisfait(s). ";
+            
+            if ($montantTotal > 0) {
+                $message .= number_format($montantTotal, 0, ',', ' ') . ' Ar distribués.';
+            } elseif ($quantiteTotal > 0) {
+                $message .= number_format($quantiteTotal, 2, ',', ' ') . ' unités distribuées.';
+            }
+            
+            Flight::redirect('/dons?success=don_valide&message=' . urlencode($message));
+        } else {
+            Flight::redirect('/dons?error=' . urlencode('Aucune distribution possible'));
+        }
+    }
+
+    /**
+     * Valide un don avec la méthode proportionnelle (Largest Remainder Method)
+     */
+    public function validerDonProportionnel($id)
+    {
+        $don = $this->donsModel->getDonById($id);
+        
+        if (!$don) {
+            Flight::redirect('/dons?error=' . urlencode('Don introuvable'));
+            return;
+        }
+        
+        if ($don['statut'] !== 'disponible') {
+            Flight::redirect('/dons?error=' . urlencode('Ce don n\'est plus disponible'));
+            return;
+        }
+        
+        // Utiliser le modèle BesoinsModel
+        $besoinsModel = new BesoinsModel($this->db);
+        
+        // Récupérer les besoins non satisfaits
+        $besoins = $besoinsModel->getBesoinsNonSatisfaits();
+        
+        if (empty($besoins)) {
+            Flight::redirect('/dons?error=' . urlencode('Aucun besoin à satisfaire actuellement'));
+            return;
+        }
+        
+        $quantite_disponible = floatval($don['quantite_restante'] ?? $don['quantite']);
+        $montant_disponible = floatval($don['montant_restant'] ?? $don['montant_argent']);
+        
+        // Filtrer les besoins compatibles et calculer les demandes
+        $besoinsCompatibles = [];
+        $totalDemande = 0;
+        
+        foreach ($besoins as $besoin) {
+            if ($don['id_article']) {
+                // Don matériel - vérifier compatibilité article
+                $tmt = $this->db->runQuery("
+                    SELECT ba.quantite, ba.quantite_satisfaite
+                    FROM besoin_articles ba
+                    WHERE ba.id_besoin = ? AND ba.id_article = ?
+                ", [$besoin['id_besoin'], $don['id_article']]);
+                $articleBesoin = $tmt->fetch();
+                
+                if ($articleBesoin) {
+                    $demande = floatval($articleBesoin['quantite']) - floatval($articleBesoin['quantite_satisfaite']);
+                    if ($demande > 0) {
+                        $besoinsCompatibles[] = [
+                            'id_besoin' => $besoin['id_besoin'],
+                            'demande' => $demande
+                        ];
+                        $totalDemande += $demande;
+                    }
+                }
+            } else {
+                // Don en argent
+                $demande = floatval($besoin['montant_total']) - floatval($besoin['montant_recu']);
+                if ($demande > 0) {
+                    $besoinsCompatibles[] = [
+                        'id_besoin' => $besoin['id_besoin'],
+                        'demande' => $demande
+                    ];
+                    $totalDemande += $demande;
+                }
+            }
+        }
+        
+        if (empty($besoinsCompatibles) || $totalDemande <= 0) {
+            Flight::redirect('/dons?error=' . urlencode('Aucun besoin compatible trouvé'));
+            return;
+        }
+        
+        $donDisponible = $don['id_article'] ? $quantite_disponible : $montant_disponible;
+        
+        // Étape 1 : Calcul proportionnel et arrondi inférieur
+        $distributions = [];
+        $totalDistribue = 0;
+        
+        foreach ($besoinsCompatibles as $bc) {
+            $proportionnel = ($bc['demande'] / $totalDemande) * $donDisponible;
+            $arrondiInferieur = floor($proportionnel);
+            $decimal = $proportionnel - $arrondiInferieur;
+            
+            $distributions[] = [
+                'id_besoin' => $bc['id_besoin'],
+                'demande' => $bc['demande'],
+                'proportionnel' => $proportionnel,
+                'arrondi' => $arrondiInferieur,
+                'decimal' => $decimal,
+                'final' => $arrondiInferieur
+            ];
+            
+            $totalDistribue += $arrondiInferieur;
+        }
+        
+        // Étape 2 : Distribution du reste selon les plus grandes décimales
+        $reste = $donDisponible - $totalDistribue;
+        
+        if ($reste > 0) {
+            // Trier par décimale décroissante
+            usort($distributions, function($a, $b) {
+                return $b['decimal'] <=> $a['decimal'];
+            });
+            
+            // Distribuer le reste
+            for ($i = 0; $i < $reste && $i < count($distributions); $i++) {
+                $distributions[$i]['final'] += 1;
+            }
+        }
+        
+        // Étape 3 : Appliquer les distributions
+        $nbDistributions = 0;
+        $totalFinal = 0;
+        
+        foreach ($distributions as $dist) {
+            if ($dist['final'] > 0) {
+                if ($don['id_article']) {
+                    $this->donsModel->distribuerArticle($don['id_don'], $dist['id_besoin'], $dist['final']);
+                } else {
+                    $this->donsModel->distribuerArgent($don['id_don'], $dist['id_besoin'], $dist['final']);
+                }
+                $nbDistributions++;
+                $totalFinal += $dist['final'];
+            }
+        }
+        
+        // Mettre à jour le statut du don
+        if ($don['id_article']) {
+            $quantite_restante = $quantite_disponible - $totalFinal;
+            if ($quantite_restante <= 0) {
+                $this->donsModel->updateStatut($don['id_don'], 'affecte');
+            } elseif ($quantite_restante < floatval($don['quantite'])) {
+                $this->donsModel->updateStatut($don['id_don'], 'partiel');
+            }
+        } else {
+            $montant_restant = $montant_disponible - $totalFinal;
+            if ($montant_restant <= 0) {
+                $this->donsModel->updateStatut($don['id_don'], 'affecte');
+            } elseif ($montant_restant < floatval($don['montant_argent'])) {
+                $this->donsModel->updateStatut($don['id_don'], 'partiel');
+            }
+        }
+        
+        if ($nbDistributions > 0) {
+            $message = "Don distribué avec succès selon la méthode proportionnelle ! ";
+            $message .= "$nbDistributions besoin(s) ont reçu une part. ";
+            
+            if ($don['id_article']) {
+                $message .= number_format($totalFinal, 2, ',', ' ') . ' unités distribuées.';
+            } else {
+                $message .= number_format($totalFinal, 0, ',', ' ') . ' Ar distribués.';
+            }
+            
+            Flight::redirect('/dons?success=don_valide&message=' . urlencode($message));
+        } else {
+            Flight::redirect('/dons?error=' . urlencode('Aucune distribution possible'));
         }
     }
 }
